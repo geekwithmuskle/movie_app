@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Movies } from './typeorm/entities/movies';
+import { MoviesModule } from './movies/movies.module';
 
 @Module({
   imports: [
@@ -12,9 +14,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: 'root',
       password: 'oniact@#24',
       database: 'barnyard',
-      entities: [],
+      entities: [Movies],
       synchronize: true,
     }),
+    MoviesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
