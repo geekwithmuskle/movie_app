@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
   IsInt,
@@ -43,12 +43,6 @@ export class CreateMovieDto {
   @Length(1, 255)
   producer: string;
 
-  @ApiPropertyOptional({
-    description: 'The date the movie record was created',
-    type: String,
-    format: 'date-time',
-    example: '2023-01-14T00:00:00Z',
-  })
   @IsOptional()
   @IsDate()
   createdAt?: Date;

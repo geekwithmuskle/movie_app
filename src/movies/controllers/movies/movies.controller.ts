@@ -63,7 +63,7 @@ export class MoviesController {
 
   @ApiOperation({ summary: 'Remove movie' })
   @ApiOkResponse({ description: 'Successful' })
-  @Delete()
+  @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.moviesService.delete(+id);
   }
