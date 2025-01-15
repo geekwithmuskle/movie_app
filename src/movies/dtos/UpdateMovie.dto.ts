@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsString, Length, Max, Min } from 'class-validator';
+import {
+  IsDate,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class UpdateMovieDto {
   @ApiProperty({
@@ -33,4 +42,8 @@ export class UpdateMovieDto {
   @IsString()
   @Length(1, 255)
   producer: string;
+
+  @IsOptional()
+  @IsDate()
+  readonly updatedAt?: Date;
 }

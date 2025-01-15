@@ -45,5 +45,5 @@ export class CreateMovieDto {
 
   @IsOptional()
   @IsDate()
-  createdAt?: Date;
+  readonly createdAt?: Date;
 }

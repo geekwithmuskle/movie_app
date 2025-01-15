@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -16,6 +17,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CreateMovieDto } from 'src/movies/dtos/CreateMovie.dto';
+import { PaginationDto } from 'src/movies/dtos/pagination.dto';
 import { UpdateMovieDto } from 'src/movies/dtos/UpdateMovie.dto';
 import { MoviesService } from 'src/movies/services/movies/movies.service';
 import { UpdateMovieParams } from 'src/movies/utils/types';
@@ -29,8 +31,8 @@ export class MoviesController {
   @ApiOkResponse({ description: 'Successful' })
   @ApiNotFoundResponse({ description: 'Record not found' })
   @Get()
-  async getAll() {
-    return await this.moviesService.findAll();
+  async getAll(@Query() paginationDto: PaginationDto) {
+    return await this.moviesService.findAll(paginationDto);
   }
 
   @ApiOperation({ summary: 'Create movie in the table' })
