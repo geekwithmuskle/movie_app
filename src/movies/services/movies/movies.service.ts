@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from 'src/movies/dtos/pagination.dto';
 import { UpdateMovieDto } from 'src/movies/dtos/UpdateMovie.dto';
+import AppError from 'src/movies/utils/AppError';
 import { CreateMovieParams } from 'src/movies/utils/types';
+import { ErrorCode } from 'src/shared/error-code.enum';
 import { Movies } from 'src/typeorm/entities/movies';
 import { Repository } from 'typeorm';
 
@@ -12,17 +14,19 @@ export class MoviesService {
     @InjectRepository(Movies) private movieRepository: Repository<Movies>,
   ) {}
 
-  async findAll(paginationDto: PaginationDto): Promise<Movies[]> {
+  async findAll(
+    paginationDto: PaginationDto,
+  ): Promise<{ movies: Movies[]; total: number }> {
     const page = paginationDto.page > 0 ? paginationDto.page : 1;
     const limit = paginationDto.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const movies = this.movieRepository.find({
+    const [movies, total] = await this.movieRepository.findAndCount({
       skip: skip,
       take: limit,
     });
 
-    return movies;
+    return { movies, total };
   }
 
   addOne(details: CreateMovieParams) {
@@ -35,11 +39,21 @@ export class MoviesService {
   }
 
   async findOne(id: number) {
-    return await this.movieRepository.findOne({ where: { id } });
+    const result = await this.movieRepository.findOne({ where: { id } });
+
+    if (!result) {
+      throw new AppError(ErrorCode['0002'], 'Invalid Request');
+    }
+    return result;
   }
 
   async updateById(id: number, updateMovie: UpdateMovieDto) {
-    return await this.movieRepository.update(id, updateMovie);
+    const result = await this.movieRepository.update(id, updateMovie);
+
+    if (!result) {
+      throw new AppError(ErrorCode['0002'], 'Invalid Request');
+    }
+    return result;
   }
 
   async delete(id: number) {

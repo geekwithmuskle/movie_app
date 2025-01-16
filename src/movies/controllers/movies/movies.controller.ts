@@ -7,6 +7,8 @@ import {
   Patch,
   Post,
   Query,
+  Req,
+  Res,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -20,6 +22,7 @@ import { CreateMovieDto } from 'src/movies/dtos/CreateMovie.dto';
 import { PaginationDto } from 'src/movies/dtos/pagination.dto';
 import { UpdateMovieDto } from 'src/movies/dtos/UpdateMovie.dto';
 import { MoviesService } from 'src/movies/services/movies/movies.service';
+import { ResponseFormat } from 'src/movies/utils/ResponseFormat';
 import { UpdateMovieParams } from 'src/movies/utils/types';
 
 @ApiTags('Movie CRUD')
@@ -31,8 +34,13 @@ export class MoviesController {
   @ApiOkResponse({ description: 'Successful' })
   @ApiNotFoundResponse({ description: 'Record not found' })
   @Get()
-  async getAll(@Query() paginationDto: PaginationDto) {
-    return await this.moviesService.findAll(paginationDto);
+  async getAll(@Req() req, @Res() res, @Query() paginationDto: PaginationDto) {
+    const response = await this.moviesService.findAll(paginationDto);
+
+    if (!response) {
+      return ResponseFormat.failureResponse(res, response, 'Failed');
+    }
+    return ResponseFormat.successResponse(res, response, 'Successful');
   }
 
   @ApiOperation({ summary: 'Create movie in the table' })
@@ -40,16 +48,26 @@ export class MoviesController {
   @ApiBadRequestResponse({ description: 'Request failed' })
   @ApiBody({ type: CreateMovieDto })
   @Post()
-  create(@Body() createMovieDto: CreateMovieDto) {
-    return this.moviesService.addOne(createMovieDto);
+  create(@Req() req, @Res() res, @Body() createMovieDto: CreateMovieDto) {
+    const response = this.moviesService.addOne(createMovieDto);
+
+    if (!response) {
+      return ResponseFormat.failureResponse(res, response, 'Failed');
+    }
+    return ResponseFormat.successResponse(res, response, 'Successful');
   }
 
   @ApiOperation({ summary: 'Get a movie by id' })
   @ApiOkResponse({ description: 'Successful' })
   @ApiNotFoundResponse({ description: 'Record not found' })
   @Get(':id')
-  async get(@Param('id') id: string) {
-    return this.moviesService.findOne(+id);
+  async get(
+    @Req() req,
+    @Res() res,
+    @Param('id')
+    id: string,
+  ) {
+    return await this.moviesService.findOne(+id);
   }
 
   @ApiOperation({ summary: 'Update movies by id' })
@@ -57,10 +75,13 @@ export class MoviesController {
   @ApiBody({ type: UpdateMovieDto })
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Req() req,
+    @Res() res,
+    @Param('id')
+    id: string,
     @Body() updatemovie: UpdateMovieParams,
   ) {
-    return this.moviesService.updateById(+id, { ...updatemovie });
+    return await this.moviesService.updateById(+id, { ...updatemovie });
   }
 
   @ApiOperation({ summary: 'Remove movie' })
