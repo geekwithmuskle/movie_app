@@ -9,3 +9,9 @@ export class UpdateMovieParams {
   year: number;
   producer: string;
 }
+
+export class MovieParams {
+  name?: string;
+  year?: number;
+  producer?: string;
+}

@@ -1,49 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
 import {
-  IsDate,
-  IsNumber,
-  IsOptional,
-  IsPositive,
   IsString,
   Length,
-  Min,
+  IsDate,
+  IsOptional,
+  IsNumber,
 } from 'class-validator';
 
-export class PaginationDto {
-  @IsNumber()
-  @Min(1)
-  @Type(() => Number)
-  @ApiProperty({
-    description: 'Page Number',
-    example: 1,
-    required: true,
-    title: 'page',
-    default: 1,
-  })
-  readonly page: number;
-
-  @IsPositive()
-  @IsNumber()
-  @Type(() => Number)
-  @ApiProperty({
-    description: 'Limit',
-    type: Number,
-    example: 20,
-    default: 20,
-  })
-  readonly limit: number;
-
+export class MovieDto {
   @ApiProperty({
     description: 'The name of the movie',
     maxLength: 255,
-    //example: 'Inception',
+    example: 'Inception',
     required: false,
   })
   @IsOptional()
   @IsString()
   @Length(1, 255)
-  readonly name?: string;
+  name?: string;
 
   @ApiProperty({
     description: 'The year the movie was released',
@@ -51,29 +25,29 @@ export class PaginationDto {
   })
   @IsOptional()
   @IsNumber()
-  readonly year?: number;
+  year?: number;
 
   @ApiProperty({
     description: 'The producer of the movie',
     maxLength: 255,
-    //example: 'Christopher Nolan',
+    example: 'Christopher Nolan',
     required: false,
   })
   @IsOptional()
   @IsString()
   @Length(1, 255)
-  readonly producer?: string;
+  producer?: string;
 
   @ApiProperty({
     description: 'The search string',
     maxLength: 255,
-    //example: 'string',
+    example: 'string',
     required: false,
   })
   @IsOptional()
   @IsString()
   @Length(1, 255)
-  readonly search?: string;
+  search?: string;
 
   @IsOptional()
   @IsDate()

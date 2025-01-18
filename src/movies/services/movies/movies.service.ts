@@ -3,10 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from 'src/movies/dtos/pagination.dto';
 import { UpdateMovieDto } from 'src/movies/dtos/UpdateMovie.dto';
 import AppError from 'src/movies/utils/AppError';
-import { CreateMovieParams } from 'src/movies/utils/types';
+import { CreateMovieParams, MovieParams } from 'src/movies/utils/types';
 import { ErrorCode } from 'src/shared/error-code.enum';
 import { Movies } from 'src/typeorm/entities/movies';
-import { Repository } from 'typeorm';
+import { Brackets, FindOptionsWhere, Repository } from 'typeorm';
 
 @Injectable()
 export class MoviesService {
@@ -14,35 +14,95 @@ export class MoviesService {
     @InjectRepository(Movies) private movieRepository: Repository<Movies>,
   ) {}
 
-  async findAll(
-    paginationDto: PaginationDto,
-  ): Promise<{ movies: Movies[]; total: number }> {
+  async findAll(paginationDto: PaginationDto): Promise<{
+    movies: Movies[];
+    total: number;
+    conditions: FindOptionsWhere<Movies>;
+  }> {
     const page = paginationDto.page > 0 ? paginationDto.page : 1;
     const limit = paginationDto.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const [movies, total] = await this.movieRepository.findAndCount({
-      skip: skip,
-      take: limit,
-    });
+    const { name, year, producer, search } = paginationDto;
 
-    return { movies, total };
+    const querybuilder = this.movieRepository.createQueryBuilder('movies');
+
+    const conditions: FindOptionsWhere<Movies> | FindOptionsWhere<Movies>[] = {
+      ...(name ? { name } : {}),
+      ...(year && !isNaN(Number(year)) ? { year: Number(year) } : {}),
+      ...(producer ? { producer } : {}),
+    };
+
+    if (search) {
+      querybuilder.andWhere(
+        new Brackets((qb) => {
+          qb.where('LOWER(movies.name LIKE LOWER(:search))', {
+            search: `%${search}%`,
+          })
+            .orWhere('LOWER(movies.year LIKE LOWER(:search))', {
+              search: `%${search}%`,
+            })
+            .orWhere('LOWER(movies.producer LIKE LOWER(:search))', {
+              search: `%${search}%`,
+            });
+        }),
+      );
+    }
+
+    // const [movies, total] = await this.movieRepository.findAndCount({
+    //   where: conditions,
+    //   skip,
+    //   take: limit,
+    // });
+    // Apply pagination
+    querybuilder.skip(skip).take(limit);
+
+    // Execute the query and retrieve results
+    const [movies, total] = await querybuilder.getManyAndCount();
+
+    return { movies, total, conditions };
   }
 
-  addOne(details: CreateMovieParams) {
+  async findMany(filters: MovieParams): Promise<Movies[]> {
+    const { name, year, producer } = filters;
+    const conditions: FindOptionsWhere<Movies> | FindOptionsWhere<Movies>[] = {
+      ...(name ? { name } : {}),
+      ...(year && !isNaN(Number(year)) ? { year: Number(year) } : {}),
+      ...(producer ? { producer } : {}),
+    };
+    const result = this.movieRepository.find({ where: conditions });
+    return result;
+  }
+
+  async addOne(details: CreateMovieParams) {
     const data = this.movieRepository.create({
       ...details,
       createdAt: new Date(),
     });
+    const { name } = data;
+    const exist = await this.movieRepository.findOne({ where: { name } });
+    if (exist) {
+      throw new AppError(ErrorCode['0002'], 'Movie already exist');
+    }
 
     return this.movieRepository.save(data);
+  }
+
+  async findByName(name: string): Promise<Movies | null> {
+    const response = await this.movieRepository.findOne({ where: { name } });
+
+    if (!response) {
+      throw new AppError(ErrorCode['0002'], 'Movie not found');
+    }
+
+    return response;
   }
 
   async findOne(id: number) {
     const result = await this.movieRepository.findOne({ where: { id } });
 
     if (!result) {
-      throw new AppError(ErrorCode['0002'], 'Invalid Request');
+      throw new AppError(ErrorCode['0002'], 'Movie not found');
     }
     return result;
   }
@@ -51,7 +111,7 @@ export class MoviesService {
     const result = await this.movieRepository.update(id, updateMovie);
 
     if (!result) {
-      throw new AppError(ErrorCode['0002'], 'Invalid Request');
+      throw new AppError(ErrorCode['0002'], 'Movie not updated');
     }
     return result;
   }
