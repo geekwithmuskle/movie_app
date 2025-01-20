@@ -34,6 +34,21 @@ export class ResponseFormat {
     this.sendResponse(res, ResponseCodes['0002'], data, message, code);
   }
 
+  static handleAppErrorResponse(
+    res: Response,
+    errorCode: string,
+    code: number = 200,
+    message?: string,
+  ) {
+    this.sendResponse(
+      res,
+      ResponseCodes[errorCode],
+      undefined,
+      message || undefined,
+      code,
+    );
+  }
+
   static sendResponse(
     res: Response,
     resDataType,
