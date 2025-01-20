@@ -17,9 +17,10 @@ export class UpdateMovieDto {
     example: 'Inception',
   })
   @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Length(1, 255)
-  name: string;
+  name?: string;
 
   @ApiProperty({
     description: 'The year the movie was released',
@@ -28,10 +29,11 @@ export class UpdateMovieDto {
     example: 2010,
   })
   @IsNotEmpty()
+  @IsOptional()
   @IsInt()
   @Min(1888) // The year the first movie was made
   @Max(new Date().getFullYear()) // Restrict to the current year
-  year: number;
+  year?: number;
 
   @ApiProperty({
     description: 'The producer of the movie',
@@ -39,9 +41,10 @@ export class UpdateMovieDto {
     example: 'Christopher Nolan',
   })
   @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Length(1, 255)
-  producer: string;
+  producer?: string;
 
   @IsOptional()
   @IsDate()

@@ -19,12 +19,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CreateMovieDto } from 'src/movies/dtos/CreateMovie.dto';
-import { MovieDto } from 'src/movies/dtos/Movies.dto';
 import { PaginationDto } from 'src/movies/dtos/pagination.dto';
 import { UpdateMovieDto } from 'src/movies/dtos/UpdateMovie.dto';
 import { MoviesService } from 'src/movies/services/movies/movies.service';
 import { ResponseFormat } from 'src/movies/utils/ResponseFormat';
-import { UpdateMovieParams } from 'src/movies/utils/types';
 
 @ApiTags('Movie CRUD')
 @Controller('movies')
@@ -50,39 +48,33 @@ export class MoviesController {
     }
   }
 
-  @ApiOperation({ summary: 'Get all movies through filter' })
-  @ApiOkResponse({ description: 'Successful' })
-  @ApiNotFoundResponse({ description: 'Record not found' })
-  @Get('search')
-  async getMany(@Req() req, @Res() res, @Query() query: MovieDto) {
-    const response = await this.moviesService.findMany(query);
-
-    if (!response) {
-      return ResponseFormat.failureResponse(res, response, 'Failed', 404);
-    }
-    return ResponseFormat.successResponse(res, response, 'Successful', 200);
-  }
-
   @ApiOperation({ summary: 'Create movie in the table' })
   @ApiOkResponse({ description: 'Successful' })
   @ApiBadRequestResponse({ description: 'Request failed' })
   @ApiBody({ type: CreateMovieDto })
   @Post()
-  async create(
-    @Req() req,
-    @Res() res,
-    @Param('name') name: string,
-    @Body() createMovieDto: CreateMovieDto,
-  ) {
-    const response1 = this.moviesService.findByName(name);
-    const response2 = this.moviesService.addOne(createMovieDto);
+  async create(@Req() req, @Res() res, @Body() createMovieDto: CreateMovieDto) {
+    const existingMovie = await this.moviesService.findByName(
+      createMovieDto.name,
+    );
 
-    if (response1) {
-      return ResponseFormat.successResponse(res, response1, 'Successful');
-    } else if (response2) {
-      return ResponseFormat.successResponse(res, response2, 'Successful');
+    if (existingMovie) {
+      return ResponseFormat.failureResponse(
+        res,
+        null,
+        'Movie with this name already exists',
+      );
+    }
+    const response2 = await this.moviesService.addOne(createMovieDto);
+
+    if (response2) {
+      return ResponseFormat.successResponse(
+        res,
+        response2,
+        'Movie added successfully',
+      );
     } else {
-      return ResponseFormat.failureResponse(res, response2, 'Failed', 400);
+      return ResponseFormat.failureResponse(res, null, 'Failed to add movie');
     }
   }
 
@@ -99,23 +91,10 @@ export class MoviesController {
     const response = await this.moviesService.findOne(+id);
 
     if (!response) {
-      return ResponseFormat.failureResponse(res, response, 'Failed', 400);
+      return ResponseFormat.failureResponse(res, null, 'Request Failed', 400);
     }
 
     return ResponseFormat.successResponse(res, response, 'Successful', 200);
-  }
-
-  @ApiOperation({ summary: 'Get a movie by name' })
-  @ApiOkResponse({ description: 'Successful' })
-  @ApiNotFoundResponse({ description: 'Record not found' })
-  @Get('name')
-  async getname(
-    @Req() req,
-    @Res() res,
-    @Param('name')
-    name: string,
-  ) {
-    return await this.moviesService.findByName(name);
   }
 
   @ApiOperation({ summary: 'Update movies by id' })
@@ -127,17 +106,15 @@ export class MoviesController {
     @Res() res,
     @Param('id')
     id: string,
-    @Body() updatemovie: UpdateMovieParams,
+    @Body() updatemovie: UpdateMovieDto,
   ) {
-    const response = await this.moviesService.updateById(+id, {
-      ...updatemovie,
-    });
+    try {
+      const response = this.moviesService.updateById(parseInt(id), updatemovie);
 
-    if (!response) {
-      return ResponseFormat.failureResponse(res, response, 'Failed', 400);
+      return ResponseFormat.successResponse(res, response, 'Successful');
+    } catch (error) {
+      return ResponseFormat.failureResponse(res, error, 'Failed to update');
     }
-
-    return ResponseFormat.successResponse(res, response, 'Successful', 200);
   }
 
   @ApiOperation({ summary: 'Remove movie' })

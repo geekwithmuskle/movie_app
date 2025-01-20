@@ -8,6 +8,7 @@ export class UpdateMovieParams {
   name: string;
   year: number;
   producer: string;
+  updatedAt: Date;
 }
 
 export class MovieParams {
