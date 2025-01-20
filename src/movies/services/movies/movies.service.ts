@@ -33,6 +33,11 @@ export class MoviesService {
       ...(producer ? { producer } : {}),
     };
 
+    // Apply filtering conditions
+    if (Object.keys(conditions).length > 0) {
+      querybuilder.where(conditions);
+    }
+
     if (search) {
       querybuilder.andWhere(
         new Brackets((qb) => {
@@ -49,18 +54,23 @@ export class MoviesService {
       );
     }
 
-    // const [movies, total] = await this.movieRepository.findAndCount({
-    //   where: conditions,
-    //   skip,
-    //   take: limit,
-    // });
-    // Apply pagination
     querybuilder.skip(skip).take(limit);
 
     // Execute the query and retrieve results
     const [movies, total] = await querybuilder.getManyAndCount();
 
-    return { movies, total, conditions };
+    if (search && (!movies || movies.length === 0)) {
+      throw new AppError(
+        ErrorCode['0002'],
+        'No movies found matching the search criteria',
+      );
+    }
+
+    if (movies && total) {
+      return { movies, total, conditions };
+    } else {
+      throw new AppError(ErrorCode['0002'], 'Request Failed');
+    }
   }
 
   async findMany(filters: MovieParams): Promise<Movies[]> {

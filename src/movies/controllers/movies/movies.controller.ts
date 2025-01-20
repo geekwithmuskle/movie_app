@@ -35,21 +35,19 @@ export class MoviesController {
   @ApiOkResponse({ description: 'Successful' })
   @ApiNotFoundResponse({ description: 'Record not found' })
   @Get()
-  async getAll(
-    @Req() req,
-    @Res() res,
-    @Query() paginationDto: PaginationDto,
-    // @Query() moviefilter: MovieDto,
-  ) {
-    const response = await this.moviesService.findAll(
-      paginationDto,
-      // moviefilter
-    );
-
-    if (!response) {
-      return ResponseFormat.failureResponse(res, response, 'Failed');
+  async getAll(@Req() req, @Res() res, @Query() paginationDto: PaginationDto) {
+    try {
+      const response = await this.moviesService.findAll(paginationDto);
+      return ResponseFormat.successResponse(res, response, 'Successful');
+    } catch (error) {
+      console.log(error);
+      return ResponseFormat.failureResponse(
+        res,
+        null,
+        error.message || 'Failed to fetch movies',
+        error.code,
+      );
     }
-    return ResponseFormat.successResponse(res, response, 'Successful');
   }
 
   @ApiOperation({ summary: 'Get all movies through filter' })
@@ -60,9 +58,9 @@ export class MoviesController {
     const response = await this.moviesService.findMany(query);
 
     if (!response) {
-      return ResponseFormat.failureResponse(res, response, 'Failed');
+      return ResponseFormat.failureResponse(res, response, 'Failed', 404);
     }
-    return ResponseFormat.successResponse(res, response, 'Successful');
+    return ResponseFormat.successResponse(res, response, 'Successful', 200);
   }
 
   @ApiOperation({ summary: 'Create movie in the table' })
@@ -81,8 +79,10 @@ export class MoviesController {
 
     if (response1) {
       return ResponseFormat.successResponse(res, response1, 'Successful');
-    } else {
+    } else if (response2) {
       return ResponseFormat.successResponse(res, response2, 'Successful');
+    } else {
+      return ResponseFormat.failureResponse(res, response2, 'Failed', 400);
     }
   }
 
@@ -96,7 +96,13 @@ export class MoviesController {
     @Param('id')
     id: string,
   ) {
-    return await this.moviesService.findOne(+id);
+    const response = await this.moviesService.findOne(+id);
+
+    if (!response) {
+      return ResponseFormat.failureResponse(res, response, 'Failed', 400);
+    }
+
+    return ResponseFormat.successResponse(res, response, 'Successful', 200);
   }
 
   @ApiOperation({ summary: 'Get a movie by name' })
@@ -123,7 +129,15 @@ export class MoviesController {
     id: string,
     @Body() updatemovie: UpdateMovieParams,
   ) {
-    return await this.moviesService.updateById(+id, { ...updatemovie });
+    const response = await this.moviesService.updateById(+id, {
+      ...updatemovie,
+    });
+
+    if (!response) {
+      return ResponseFormat.failureResponse(res, response, 'Failed', 400);
+    }
+
+    return ResponseFormat.successResponse(res, response, 'Successful', 200);
   }
 
   @ApiOperation({ summary: 'Remove movie' })
