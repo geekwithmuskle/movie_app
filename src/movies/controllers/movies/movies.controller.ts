@@ -38,7 +38,6 @@ export class MoviesController {
       const response = await this.moviesService.findAll(paginationDto);
       return ResponseFormat.successResponse(res, response, 'Successful');
     } catch (error) {
-      console.log(error);
       return ResponseFormat.failureResponse(
         res,
         null,

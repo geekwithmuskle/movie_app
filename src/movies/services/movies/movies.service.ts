@@ -17,7 +17,6 @@ export class MoviesService {
   async findAll(paginationDto: PaginationDto): Promise<{
     movies: Movies[];
     total: number;
-    conditions: FindOptionsWhere<Movies>;
   }> {
     const page = paginationDto.page > 0 ? paginationDto.page : 1;
     const limit = paginationDto.limit ?? 10;
@@ -67,9 +66,9 @@ export class MoviesService {
     }
 
     if (movies && total) {
-      return { movies, total, conditions };
+      return { movies, total };
     } else {
-      throw new AppError(ErrorCode['0002'], 'Request Failed');
+      return { movies: [], total: 0 };
     }
   }
 
