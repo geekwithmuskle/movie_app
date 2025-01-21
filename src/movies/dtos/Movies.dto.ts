@@ -1,22 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsDate,
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
   IsString,
   Length,
-  Max,
-  Min,
+  IsDate,
+  IsOptional,
+  IsNumber,
 } from 'class-validator';
 
-export class UpdateMovieDto {
+export class MovieDto {
   @ApiProperty({
     description: 'The name of the movie',
     maxLength: 255,
     example: 'Inception',
+    required: false,
   })
-  @IsNotEmpty()
   @IsOptional()
   @IsString()
   @Length(1, 255)
@@ -24,29 +21,35 @@ export class UpdateMovieDto {
 
   @ApiProperty({
     description: 'The year the movie was released',
-    minimum: 1888,
-    maximum: new Date().getFullYear(),
-    example: 2010,
+    required: false,
   })
-  @IsNotEmpty()
   @IsOptional()
-  @IsInt()
-  @Min(1888) // The year the first movie was made
-  @Max(new Date().getFullYear()) // Restrict to the current year
+  @IsNumber()
   year?: number;
 
   @ApiProperty({
     description: 'The producer of the movie',
     maxLength: 255,
     example: 'Christopher Nolan',
+    required: false,
   })
-  @IsNotEmpty()
   @IsOptional()
   @IsString()
   @Length(1, 255)
   producer?: string;
 
+  @ApiProperty({
+    description: 'The search string',
+    maxLength: 255,
+    example: 'string',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  @Length(1, 255)
+  search?: string;
+
   @IsOptional()
   @IsDate()
-  readonly updatedAt?: Date;
+  readonly createdAt?: Date;
 }

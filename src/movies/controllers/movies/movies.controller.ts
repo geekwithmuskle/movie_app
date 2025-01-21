@@ -23,7 +23,6 @@ import { PaginationDto } from 'src/movies/dtos/pagination.dto';
 import { UpdateMovieDto } from 'src/movies/dtos/UpdateMovie.dto';
 import { MoviesService } from 'src/movies/services/movies/movies.service';
 import { ResponseFormat } from 'src/movies/utils/ResponseFormat';
-import { UpdateMovieParams } from 'src/movies/utils/types';
 
 @ApiTags('Movie CRUD')
 @Controller('movies')
@@ -35,12 +34,17 @@ export class MoviesController {
   @ApiNotFoundResponse({ description: 'Record not found' })
   @Get()
   async getAll(@Req() req, @Res() res, @Query() paginationDto: PaginationDto) {
-    const response = await this.moviesService.findAll(paginationDto);
-
-    if (!response) {
-      return ResponseFormat.failureResponse(res, response, 'Failed');
+    try {
+      const response = await this.moviesService.findAll(paginationDto);
+      return ResponseFormat.successResponse(res, response, 'Successful');
+    } catch (error) {
+      return ResponseFormat.failureResponse(
+        res,
+        null,
+        error.message || 'Failed to fetch movies',
+        error.code,
+      );
     }
-    return ResponseFormat.successResponse(res, response, 'Successful');
   }
 
   @ApiOperation({ summary: 'Create movie in the table' })
@@ -48,13 +52,29 @@ export class MoviesController {
   @ApiBadRequestResponse({ description: 'Request failed' })
   @ApiBody({ type: CreateMovieDto })
   @Post()
-  create(@Req() req, @Res() res, @Body() createMovieDto: CreateMovieDto) {
-    const response = this.moviesService.addOne(createMovieDto);
+  async create(@Req() req, @Res() res, @Body() createMovieDto: CreateMovieDto) {
+    const existingMovie = await this.moviesService.findByName(
+      createMovieDto.name,
+    );
 
-    if (!response) {
-      return ResponseFormat.failureResponse(res, response, 'Failed');
+    if (existingMovie) {
+      return ResponseFormat.failureResponse(
+        res,
+        null,
+        'Movie with this name already exists',
+      );
     }
-    return ResponseFormat.successResponse(res, response, 'Successful');
+    const response2 = await this.moviesService.addOne(createMovieDto);
+
+    if (response2) {
+      return ResponseFormat.successResponse(
+        res,
+        response2,
+        'Movie added successfully',
+      );
+    } else {
+      return ResponseFormat.failureResponse(res, null, 'Failed to add movie');
+    }
   }
 
   @ApiOperation({ summary: 'Get a movie by id' })
@@ -67,7 +87,13 @@ export class MoviesController {
     @Param('id')
     id: string,
   ) {
-    return await this.moviesService.findOne(+id);
+    const response = await this.moviesService.findOne(+id);
+
+    if (!response) {
+      return ResponseFormat.failureResponse(res, null, 'Request Failed', 400);
+    }
+
+    return ResponseFormat.successResponse(res, response, 'Successful', 200);
   }
 
   @ApiOperation({ summary: 'Update movies by id' })
@@ -79,9 +105,15 @@ export class MoviesController {
     @Res() res,
     @Param('id')
     id: string,
-    @Body() updatemovie: UpdateMovieParams,
+    @Body() updatemovie: UpdateMovieDto,
   ) {
-    return await this.moviesService.updateById(+id, { ...updatemovie });
+    try {
+      const response = this.moviesService.updateById(parseInt(id), updatemovie);
+
+      return ResponseFormat.successResponse(res, response, 'Successful');
+    } catch (error) {
+      return ResponseFormat.failureResponse(res, error, 'Failed to update');
+    }
   }
 
   @ApiOperation({ summary: 'Remove movie' })
