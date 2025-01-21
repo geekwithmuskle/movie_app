@@ -21,7 +21,7 @@ export class PaginationDto {
     title: 'page',
     default: 1,
   })
- page: number;
+  page: number;
 
   @IsPositive()
   @IsNumber()
@@ -43,7 +43,7 @@ export class PaginationDto {
   @IsOptional()
   @IsString()
   @Length(1, 255)
-   name?: string;
+  name?: string;
 
   @ApiProperty({
     description: 'The year the movie was released',
