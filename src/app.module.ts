@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Movies } from './typeorm/entities/movies';
 import { MoviesModule } from './movies/movies.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -17,9 +16,17 @@ import { MoviesModule } from './movies/movies.module';
       entities: [Movies],
       synchronize: true,
     }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000, // Note: ttl is now in milliseconds
+          limit: 10,
+        },
+      ],
+    }),
     MoviesModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
