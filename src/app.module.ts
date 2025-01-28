@@ -1,23 +1,13 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Movies } from './typeorm/entities/movies';
 import { MoviesModule } from './modules/movies/movies.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { GlobalExceptionFilter } from './modules/movies/utils/GlobalExceptionFilter';
+import { DatabaseModule } from './modules/db-module/db.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'oniact@#24',
-      database: 'barnyard',
-      entities: [Movies],
-      synchronize: true,
-    }),
+    DatabaseModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {
