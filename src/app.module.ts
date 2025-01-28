@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Movies } from './typeorm/entities/movies';
-import { MoviesModule } from './movies/movies.module';
+import { MoviesModule } from './modules/movies/movies.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
-import { GlobalExceptionFilter } from './movies/utils/GlobalExceptionFilter';
+import { GlobalExceptionFilter } from './modules/movies/utils/GlobalExceptionFilter';
 
 @Module({
   imports: [

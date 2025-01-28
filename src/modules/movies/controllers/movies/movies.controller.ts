@@ -18,11 +18,11 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { CreateMovieDto } from 'src/movies/dtos/CreateMovie.dto';
-import { PaginationDto } from 'src/movies/dtos/pagination.dto';
-import { UpdateMovieDto } from 'src/movies/dtos/UpdateMovie.dto';
-import { MoviesService } from 'src/movies/services/movies/movies.service';
-import { ResponseFormat } from 'src/movies/utils/ResponseFormat';
+import { CreateMovieDto } from 'src/modules/movies/dtos/CreateMovie.dto';
+import { PaginationDto } from 'src/modules/movies/dtos/pagination.dto';
+import { UpdateMovieDto } from 'src/modules/movies/dtos/UpdateMovie.dto';
+import { MoviesService } from 'src/modules/movies/services/movies/movies.service';
+import { ResponseFormat } from 'src/modules/movies/utils/ResponseFormat';
 
 @ApiTags('Movie CRUD')
 @Controller('movies')
