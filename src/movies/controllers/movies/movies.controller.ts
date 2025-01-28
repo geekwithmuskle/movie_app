@@ -108,7 +108,10 @@ export class MoviesController {
     @Body() updatemovie: UpdateMovieDto,
   ) {
     try {
-      const response = this.moviesService.updateById(parseInt(id), updatemovie);
+      const response = await this.moviesService.updateById(
+        parseInt(id),
+        updatemovie,
+      );
 
       return ResponseFormat.successResponse(res, response, 'Successful');
     } catch (error) {

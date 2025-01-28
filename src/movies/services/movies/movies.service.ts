@@ -100,7 +100,7 @@ export class MoviesService {
     return response;
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Movies | null> {
     try {
       const result = await this.movieRepository.findOne({ where: { id } });
       return result;
@@ -109,7 +109,10 @@ export class MoviesService {
     }
   }
 
-  async updateById(id: number, updateMovie: UpdateMovieDto) {
+  async updateById(
+    id: number,
+    updateMovie: UpdateMovieDto,
+  ): Promise<Movies | null | string> {
     const response = await this.movieRepository.findOne({ where: { id } });
 
     if (!response) {
