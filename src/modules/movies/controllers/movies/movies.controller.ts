@@ -34,17 +34,13 @@ export class MoviesController {
   @ApiNotFoundResponse({ description: 'Record not found' })
   @Get()
   async getAll(@Req() req, @Res() res, @Query() paginationDto: PaginationDto) {
-    try {
-      const response = await this.moviesService.findAll(paginationDto);
-      return ResponseFormat.successResponse(res, response, 'Successful');
-    } catch (error) {
-      return ResponseFormat.failureResponse(
-        res,
-        null,
-        error.message || 'Failed to fetch movies',
-        error.code,
-      );
+    const response = await this.moviesService.findAll(paginationDto);
+
+    if (!response) {
+      return ResponseFormat.failureResponse(res, response, 'Failed');
     }
+
+    return ResponseFormat.successResponse(res, response, 'Successful');
   }
 
   @ApiOperation({ summary: 'Create movie in the table' })
@@ -107,16 +103,16 @@ export class MoviesController {
     id: string,
     @Body() updatemovie: UpdateMovieDto,
   ) {
-    try {
-      const response = await this.moviesService.updateById(
-        parseInt(id),
-        updatemovie,
-      );
+    const response = await this.moviesService.updateById(
+      parseInt(id),
+      updatemovie,
+    );
 
-      return ResponseFormat.successResponse(res, response, 'Successful');
-    } catch (error) {
-      return ResponseFormat.failureResponse(res, error, 'Failed to update');
+    if (!response) {
+      return ResponseFormat.failureResponse(res, response, 'Failed to update');
     }
+
+    return ResponseFormat.successResponse(res, response, 'Successful');
   }
 
   @ApiOperation({ summary: 'Remove movie' })
