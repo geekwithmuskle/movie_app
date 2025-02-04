@@ -21,4 +21,7 @@ export class Movies {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @CreateDateColumn()
+  updatedAt: Date;
 }

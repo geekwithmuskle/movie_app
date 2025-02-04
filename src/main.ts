@@ -1,7 +1,9 @@
 import { NestFactory } from '@nestjs/core';
+import * as compression from 'compression';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { configureSwagger } from './libs/swagger';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,6 +18,17 @@ async function bootstrap() {
       },
     }),
   );
+
+  app.enableCors({
+    origin: '*',
+    methods: 'POST, GET, OPTIONS, DELETE, PATCH',
+    credentials: true,
+    allowedHeaders:
+      'Content-Type, Authorization, X-Requested-With, token, X-Forwarded-For, x-hmac-signature, X-Hmac-Signature',
+  });
+
+  app.use(helmet());
+  app.use(compression());
 
   configureSwagger(app);
 

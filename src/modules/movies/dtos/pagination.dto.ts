@@ -21,7 +21,7 @@ export class PaginationDto {
     title: 'page',
     default: 1,
   })
-  readonly page: number;
+  page: number;
 
   @IsPositive()
   @IsNumber()
@@ -32,7 +32,7 @@ export class PaginationDto {
     example: 20,
     default: 20,
   })
-  readonly limit: number;
+  limit: number;
 
   @ApiProperty({
     description: 'The name of the movie',
@@ -43,7 +43,7 @@ export class PaginationDto {
   @IsOptional()
   @IsString()
   @Length(1, 255)
-  readonly name?: string;
+  name?: string;
 
   @ApiProperty({
     description: 'The year the movie was released',
@@ -51,7 +51,7 @@ export class PaginationDto {
   })
   @IsOptional()
   @IsNumber()
-  readonly year?: number;
+  year?: number;
 
   @ApiProperty({
     description: 'The producer of the movie',
@@ -62,7 +62,7 @@ export class PaginationDto {
   @IsOptional()
   @IsString()
   @Length(1, 255)
-  readonly producer?: string;
+  producer?: string;
 
   @ApiProperty({
     description: 'The search string',
@@ -73,9 +73,13 @@ export class PaginationDto {
   @IsOptional()
   @IsString()
   @Length(1, 255)
-  readonly search?: string;
+  search?: string;
 
   @IsOptional()
   @IsDate()
   readonly createdAt?: Date;
+
+  @IsOptional()
+  @IsDate()
+  updatedAt?: Date;
 }

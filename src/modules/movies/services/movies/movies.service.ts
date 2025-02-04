@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaginationDto } from 'src/movies/dtos/pagination.dto';
-import { UpdateMovieDto } from 'src/movies/dtos/UpdateMovie.dto';
-import AppError from 'src/movies/utils/AppError';
-import { CreateMovieParams, MovieParams } from 'src/movies/utils/types';
+import { PaginationDto } from 'src/modules/movies/dtos/pagination.dto';
+import { UpdateMovieDto } from 'src/modules/movies/dtos/UpdateMovie.dto';
+import AppError from 'src/modules/movies/utils/AppError';
+import { CreateMovieParams, MovieParams } from 'src/modules/movies/utils/types';
 import { ErrorCode } from 'src/shared/error-code.enum';
-import { Movies } from 'src/typeorm/entities/movies';
+import { Movies } from 'src/modules/db-module/entities/movies';
 import { Brackets, FindOptionsWhere, Not, Repository } from 'typeorm';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class MoviesService {
     movies: Movies[];
     total: number;
   }> {
-    const page = paginationDto.page > 0 ? paginationDto.page : 1;
+    const page = Math.max(paginationDto.page || 1, 1);
     const limit = paginationDto.limit ?? 10;
     const skip = (page - 1) * limit;
 
@@ -26,11 +26,11 @@ export class MoviesService {
 
     const querybuilder = this.movieRepository.createQueryBuilder('movies');
 
-    const conditions: FindOptionsWhere<Movies> | FindOptionsWhere<Movies>[] = {
-      ...(name ? { name } : {}),
-      ...(year && !isNaN(Number(year)) ? { year: Number(year) } : {}),
-      ...(producer ? { producer } : {}),
-    };
+    const conditions: FindOptionsWhere<Movies> = {};
+
+    if (name) conditions.name = name;
+    if (year && !isNaN(Number(year))) conditions.year = Number(year);
+    if (producer) conditions.producer = producer;
 
     // Apply filtering conditions
     if (Object.keys(conditions).length > 0) {
@@ -58,18 +58,14 @@ export class MoviesService {
     // Execute the query and retrieve results
     const [movies, total] = await querybuilder.getManyAndCount();
 
-    if (search && (!movies || movies.length === 0)) {
+    if (search && movies.length === 0) {
       throw new AppError(
         ErrorCode['0002'],
         'No movies found matching the search criteria',
       );
     }
 
-    if (movies && total) {
-      return { movies, total };
-    } else {
-      return { movies: [], total: 0 };
-    }
+    return { movies, total };
   }
 
   async findMany(filters: MovieParams): Promise<Movies[]> {
@@ -104,7 +100,7 @@ export class MoviesService {
     return response;
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Movies | null> {
     try {
       const result = await this.movieRepository.findOne({ where: { id } });
       return result;
@@ -113,7 +109,10 @@ export class MoviesService {
     }
   }
 
-  async updateById(id: number, updateMovie: UpdateMovieDto) {
+  async updateById(
+    id: number,
+    updateMovie: UpdateMovieDto,
+  ): Promise<Movies | null | string> {
     const response = await this.movieRepository.findOne({ where: { id } });
 
     if (!response) {
@@ -130,7 +129,10 @@ export class MoviesService {
       }
     }
 
-    const result = this.movieRepository.merge(response, updateMovie);
+    const result = this.movieRepository.merge(response, {
+      ...updateMovie,
+      updatedAt: new Date(),
+    });
     return await this.movieRepository.save(result);
   }
 
