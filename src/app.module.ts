@@ -5,6 +5,8 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { GlobalExceptionFilter } from './modules/movies/utils/GlobalExceptionFilter';
 import { DatabaseModule } from './modules/db-module/db.module';
 import { SanitizeMiddleware } from './Sanitize.middleware';
+import { UserModule } from './modules/user/user.module';
+import { UserController } from './modules/controller/user/user.controller';
 
 @Module({
   imports: [
@@ -18,8 +20,9 @@ import { SanitizeMiddleware } from './Sanitize.middleware';
       ],
     }),
     MoviesModule,
+    UserModule,
   ],
-  controllers: [],
+  controllers: [UserController],
   providers: [
     {
       provide: APP_FILTER,
