@@ -22,7 +22,7 @@ import { CreateMovieDto } from 'src/modules/movies/dtos/CreateMovie.dto';
 import { PaginationDto } from 'src/modules/movies/dtos/pagination.dto';
 import { UpdateMovieDto } from 'src/modules/movies/dtos/UpdateMovie.dto';
 import { MoviesService } from 'src/modules/movies/services/movies/movies.service';
-import { ResponseFormat } from 'src/modules/movies/utils/ResponseFormat';
+import { ResponseFormat } from 'src/shared/utils/ResponseFormat';
 
 @ApiTags('Movie CRUD')
 @Controller('movies')
