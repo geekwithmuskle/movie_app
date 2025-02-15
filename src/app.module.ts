@@ -2,7 +2,7 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { MoviesModule } from './modules/movies/movies.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
-import { GlobalExceptionFilter } from './modules/movies/utils/GlobalExceptionFilter';
+import { GlobalExceptionFilter } from './shared/utils/GlobalExceptionFilter';
 import { DatabaseModule } from './modules/db-module/db.module';
 import { SanitizeMiddleware } from './Sanitize.middleware';
 import { UserModule } from './modules/user/user.module';

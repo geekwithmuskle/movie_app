@@ -8,7 +8,7 @@ import AppError from './AppError';
 import { ResponseFormat } from './ResponseFormat';
 import AppValidationError from './AppValidationError';
 import { ResponseCodes } from './ResponseCodes';
-import { ErrorCode } from 'src/shared/error-code.enum';
+import { ErrorCode } from 'src/shared/utils/error-code.enum';
 import { Response } from 'express';
 
 @Catch()
