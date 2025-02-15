@@ -1,4 +1,4 @@
-import { ErrorCode } from 'src/shared/error-code.enum';
+import { ErrorCode } from 'src/shared/utils/error-code.enum';
 import { ResponseCodes } from './ResponseCodes';
 
 class AppError extends Error {

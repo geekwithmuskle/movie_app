@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from 'src/modules/movies/dtos/pagination.dto';
 import { UpdateMovieDto } from 'src/modules/movies/dtos/UpdateMovie.dto';
-import AppError from 'src/modules/movies/utils/AppError';
-import { CreateMovieParams, MovieParams } from 'src/modules/movies/utils/types';
-import { ErrorCode } from 'src/shared/error-code.enum';
+import AppError from 'src/shared/utils/AppError';
+import { CreateMovieParams, MovieParams } from 'src/shared/utils/types';
+import { ErrorCode } from 'src/shared/utils/error-code.enum';
 import { Movies } from 'src/modules/db-module/entities/movies';
 import { Brackets, FindOptionsWhere, Not, Repository } from 'typeorm';
 
