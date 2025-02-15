@@ -6,7 +6,7 @@ import { GlobalExceptionFilter } from './shared/utils/GlobalExceptionFilter';
 import { DatabaseModule } from './modules/db-module/db.module';
 import { SanitizeMiddleware } from './Sanitize.middleware';
 import { UserModule } from './modules/user/user.module';
-import { UserController } from './modules/controller/user/user.controller';
+import { UserController } from './modules/user/controller';
 
 @Module({
   imports: [
