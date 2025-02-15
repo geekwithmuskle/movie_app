@@ -7,6 +7,9 @@ import { DatabaseModule } from './modules/db-module/db.module';
 import { SanitizeMiddleware } from './Sanitize.middleware';
 import { UserModule } from './modules/user/user.module';
 import { UserController } from './modules/user/controller';
+import { AuthModule } from './src/modules/auth/auth.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { ControllerController } from './modules/controller/controller.controller';
 
 @Module({
   imports: [
@@ -21,8 +24,9 @@ import { UserController } from './modules/user/controller';
     }),
     MoviesModule,
     UserModule,
+    AuthModule,
   ],
-  controllers: [UserController],
+  controllers: [UserController, ControllerController],
   providers: [
     {
       provide: APP_FILTER,
