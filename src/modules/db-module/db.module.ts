@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Movies } from './entities/movies';
 import configuration from 'src/libs/configuration';
+import { Users } from './entities/users';
 
 const config = configuration();
 
@@ -15,7 +16,7 @@ const config = configuration();
       password: config.mysql.password,
       database: config.mysql.database,
       synchronize: config.mysql.synchronize,
-      entities: [Movies],
+      entities: [Movies, Users],
     }),
   ],
 })
