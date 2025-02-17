@@ -1,15 +1,13 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { MoviesModule } from './modules/movies/movies.module';
+import { MoviesModule } from './modules/movies';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
-import { GlobalExceptionFilter } from './shared/utils/GlobalExceptionFilter';
-import { DatabaseModule } from './modules/db-module/db.module';
+import { GlobalExceptionFilter } from './shared';
+import { DatabaseModule, UsersEntity } from './modules/db-module';
 import { SanitizeMiddleware } from './Sanitize.middleware';
-import { UserModule } from './modules/user/user.module';
+import { UserModule } from './modules/user';
 import { UserController } from './modules/user/controller';
-import { AuthModule } from './src/modules/auth/auth.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { ControllerController } from './modules/controller/controller.controller';
+import { AuthController, AuthModule } from './modules/auth';
 
 @Module({
   imports: [
@@ -26,7 +24,7 @@ import { ControllerController } from './modules/controller/controller.controller
     UserModule,
     AuthModule,
   ],
-  controllers: [UserController, ControllerController],
+  controllers: [UserController, AuthController],
   providers: [
     {
       provide: APP_FILTER,
@@ -36,6 +34,7 @@ import { ControllerController } from './modules/controller/controller.controller
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+    UsersEntity,
   ],
 })
 export class AppModule {
