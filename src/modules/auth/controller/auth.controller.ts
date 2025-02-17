@@ -1,9 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from 'src/modules/user';
 import { CreateUserDto } from 'src/modules/user/dto';
 import { LoginDto } from '../dto/auth.dto';
 import { AuthService } from '../service';
+import { ResponseFormat } from 'src/shared';
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
@@ -20,10 +21,31 @@ export class AuthController {
   })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @Post('register')
-  async registerUser(@Body() dto: CreateUserDto) {
-    return await this.userService.create(dto);
+  async registerUser(@Res() res, @Req() req, @Body() dto: CreateUserDto) {
+    const response = await this.userService.create(dto);
+    if (!response) {
+      throw new ResponseFormat.failureResponse(
+        res,
+        null,
+        'Failed to register user',
+      );
+    }
+
+    return ResponseFormat.successResponse(
+      res,
+      response,
+      'User registered successfully',
+    );
   }
 
   @Post('login')
-  async login(@Body() dto: LoginDto) {}
+  async login(@Res() res, @Req() req, @Body() dto: LoginDto) {
+    const response = await this.authService.login(dto);
+
+    if (!response) {
+      throw new ResponseFormat.failureResponse(res, null, 'Failed to login');
+    }
+    console.log(response);
+    return ResponseFormat.successResponse(res, response, 'Login Successful!!!');
+  }
 }
