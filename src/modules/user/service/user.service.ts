@@ -6,6 +6,8 @@ import { CreateUserDto } from '../dto';
 import AppError from 'src/shared/utils/AppError';
 import { ErrorCode } from 'src/shared';
 import { hash } from 'bcrypt';
+import { QueryParamDto } from '../dto/query-param.dto';
+import { LoginDto } from 'src/modules/auth/dto/auth.dto';
 
 @Injectable()
 export class UserService {
@@ -28,9 +30,10 @@ export class UserService {
       password: hashedpassword,
     });
 
-    //const { password, ...result } = newUser;
+    const savedUsers = await this.userRepository.save(newUser);
 
-    return await this.userRepository.save(newUser);
+    const { password, ...result } = savedUsers;
+    return result;
   }
 
   async listUser(): Promise<UsersEntity[]> {
@@ -42,10 +45,18 @@ export class UserService {
     return users;
   }
 
-  async findByEmail(email: string) {
+  async findByEmail(data: LoginDto) {
     return await this.userRepository.findOne({
       where: {
-        email: email,
+        email: data.username,
+      },
+    });
+  }
+
+  async findById(data: QueryParamDto) {
+    return await this.userRepository.findOne({
+      where: {
+        id: data.id,
       },
     });
   }
