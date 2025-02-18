@@ -1,6 +1,7 @@
-import { Controller, Get, Query, Req, Res } from '@nestjs/common';
+import { Controller, Get, Param, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { UserService } from '../service';
 import {
+  ApiBearerAuth,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -8,8 +9,11 @@ import {
 } from '@nestjs/swagger';
 import { ResponseFormat } from 'src/shared';
 import { QueryParamDto } from '../dto/query-param.dto';
+import { JwtGuard } from 'src/modules/auth/guards/jwt.guard';
+import { LoginDto } from 'src/modules/auth/dto/auth.dto';
 
 @ApiTags('Users')
+@ApiBearerAuth('JWT')
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
@@ -28,9 +32,21 @@ export class UserController {
     return ResponseFormat.successResponse(res, response, 'Successful');
   }
 
+  @UseGuards(JwtGuard)
   @Get('id')
   async userProfile(@Req() req, @Res() res, @Query() query: QueryParamDto) {
     const response = await this.userService.findById(query);
+
+    if (!response) {
+      return ResponseFormat.failureResponse(res, response, 'Failed');
+    }
+
+    return ResponseFormat.successResponse(res, response, 'Successful');
+  }
+
+  @Get('mail')
+  async user(@Req() req, @Res() res, @Query() query: LoginDto) {
+    const response = await this.userService.findByEmail(query);
 
     if (!response) {
       return ResponseFormat.failureResponse(res, response, 'Failed');

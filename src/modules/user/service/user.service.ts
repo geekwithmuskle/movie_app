@@ -16,7 +16,7 @@ export class UserService {
     private userRepository: Repository<UsersEntity>,
   ) {}
 
-  async create(data: CreateUserDto): Promise<any> {
+  async create(data: CreateUserDto): Promise<Omit<UsersEntity, 'password'>> {
     const user = await this.userRepository.findOne({
       where: { email: data.email },
     });
@@ -53,7 +53,7 @@ export class UserService {
     });
   }
 
-  async findById(data: QueryParamDto) {
+  async findById(data: QueryParamDto): Promise<UsersEntity> {
     return await this.userRepository.findOne({
       where: {
         id: data.id,

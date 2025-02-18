@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Injectable } from '@nestjs/common';
 import { LoginDto } from '../dto/auth.dto';
 import { UserService } from 'src/modules/user';
 import { compare } from 'bcrypt';
@@ -8,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import configuration from 'src/libs/configuration';
 
 const config = configuration();
-@Controller('service')
+@Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
@@ -42,14 +42,17 @@ export class AuthService {
     };
   }
 
-  async validateUser(dto: LoginDto) {
-    const user = await this.userService.findByEmail(dto);
+  async validateUser(data: LoginDto) {
+    try {
+      const user = await this.userService.findByEmail(data);
 
-    if (user && (await compare(dto.password, user.password))) {
-      const { password, ...result } = user;
-      return result;
+      if (user && (await compare(data.password, user.password))) {
+        const { password, ...result } = user;
+        return result;
+      }
+    } catch (err) {
+      console.log(`Here is my friend`, err);
+      throw new AppError(ErrorCode['0005'], 'Username or Password not correct');
     }
-
-    throw new AppError(ErrorCode['0005'], 'Username or Password not correct');
   }
 }
