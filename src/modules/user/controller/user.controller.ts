@@ -34,8 +34,8 @@ export class UserController {
 
   @UseGuards(JwtGuard)
   @Get('id')
-  async userProfile(@Req() req, @Res() res, @Query() query: QueryParamDto) {
-    const response = await this.userService.findById(query);
+  async userProfile(@Req() req, @Res() res, @Param() id: QueryParamDto) {
+    const response = await this.userService.findById(id);
 
     if (!response) {
       return ResponseFormat.failureResponse(res, response, 'Failed');

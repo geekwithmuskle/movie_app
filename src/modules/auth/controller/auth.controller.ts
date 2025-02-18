@@ -1,10 +1,11 @@
-import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from 'src/modules/user';
 import { CreateUserDto } from 'src/modules/user/dto';
 import { LoginDto } from '../dto/auth.dto';
 import { AuthService } from '../service';
 import { ResponseFormat } from 'src/shared';
+import { RefreshJwtGuard } from '../guards';
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
@@ -45,7 +46,12 @@ export class AuthController {
     if (!response) {
       throw new ResponseFormat.failureResponse(res, null, 'Failed to login');
     }
-    console.log(response);
     return ResponseFormat.successResponse(res, response, 'Login Successful!!!');
+  }
+
+  @UseGuards(RefreshJwtGuard)
+  @Post('refresh')
+  async refreshToken(@Res() res, @Req() req) {
+    return await this.authService.refreshToken(req.user);
   }
 }

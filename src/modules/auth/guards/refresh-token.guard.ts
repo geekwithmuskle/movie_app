@@ -8,7 +8,7 @@ import AppError from 'src/shared/utils/AppError';
 const config = configuration();
 
 @Injectable()
-export class JwtGuard implements CanActivate {
+export class RefreshJwtGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -19,7 +19,7 @@ export class JwtGuard implements CanActivate {
 
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: config.jwt.secretKey,
+        secret: config.jwt.refreshToken,
       });
       request['user'] = payload;
     } catch (err) {
@@ -40,7 +40,7 @@ export class JwtGuard implements CanActivate {
     }
 
     const [type, token] = authHeader.split(' ');
-    if (type !== 'Bearer' || !token) {
+    if (type !== 'Refresh' || !token) {
       throw new AppError(
         ErrorCode['0005'],
         'Invalid Authorization header format',

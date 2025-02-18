@@ -1,4 +1,4 @@
-import { Controller, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { LoginDto } from '../dto/auth.dto';
 import { UserService } from 'src/modules/user';
 import { compare } from 'bcrypt';
@@ -51,8 +51,28 @@ export class AuthService {
         return result;
       }
     } catch (err) {
-      console.log(`Here is my friend`, err);
       throw new AppError(ErrorCode['0005'], 'Username or Password not correct');
     }
+  }
+
+  async refreshToken(user: any) {
+    const payload = {
+      username: user.username,
+      sub: user.sub,
+    };
+
+    return {
+      accessToken: await this.jwtService.signAsync(payload, {
+        expiresIn: '1h',
+        secret: config.jwt.secretKey,
+      }),
+
+      refreshToken: {
+        accessToken: await this.jwtService.signAsync(payload, {
+          expiresIn: '7d',
+          secret: config.jwt.refreshToken,
+        }),
+      },
+    };
   }
 }
