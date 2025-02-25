@@ -12,6 +12,7 @@ export class CreateRoleDto {
 }
 
 export class Permission {
+  @IsString()
   resource: Resource;
 
   @IsEnum(Action, { each: true })

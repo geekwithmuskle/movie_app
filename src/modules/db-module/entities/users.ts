@@ -1,5 +1,5 @@
 import { Role } from 'src/modules/auth/enum';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Generated, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'users' })
 export class UsersEntity {
@@ -21,4 +21,8 @@ export class UsersEntity {
     default: Role.USER,
   })
   role: Role;
+
+  @Column({ type: 'uuid', nullable: true })
+  @Generated('uuid')
+  roleId: string | null;
 }
