@@ -5,7 +5,6 @@ import { AuthController, AuthModule, AuthService } from './auth';
 import { DatabaseModule, Movies, UsersEntity } from './db-module';
 import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
@@ -15,7 +14,6 @@ import { RolesModule } from './roles/roles.module';
     MoviesModule,
     UserModule,
     AuthModule,
-    RolesModule,
   ],
   controllers: [UserController, AuthController, MoviesController],
   providers: [MoviesService, AuthService, JwtService, UserService],

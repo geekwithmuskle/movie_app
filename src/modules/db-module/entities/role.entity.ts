@@ -7,22 +7,16 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Permission } from './permission.entity';
+import { permission } from 'process';
 
-import { Role } from './role.entity';
-
-@Entity({ name: 'users' })
-export class UsersEntity {
+@Entity()
+export class Role {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ length: 20 })
   name: string;
-
-  @Column()
-  email: string;
-
-  @Column()
-  password: string;
 
   @CreateDateColumn()
   createTime: Date;
@@ -30,17 +24,17 @@ export class UsersEntity {
   @UpdateDateColumn()
   updateTime: Date;
 
-  @ManyToMany(() => Role)
+  @ManyToMany(() => Permission)
   @JoinTable({
-    name: 'user_role_relation',
+    name: 'role_permission_relation',
     joinColumn: {
-      name: 'userId',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
       name: 'roleId',
       referencedColumnName: 'id',
     },
+    inverseJoinColumn: {
+      name: 'permissionId',
+      referencedColumnName: 'id',
+    },
   })
-  roles: Role[];
+  permissions: Permission[];
 }

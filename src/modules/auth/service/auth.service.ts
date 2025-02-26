@@ -6,7 +6,6 @@ import AppError from 'src/shared/utils/AppError';
 import { ErrorCode } from 'src/shared';
 import { JwtService } from '@nestjs/jwt';
 import configuration from 'src/libs/configuration';
-import { CurrentUser } from '../types/current-user';
 
 const config = configuration();
 @Injectable()
@@ -75,15 +74,5 @@ export class AuthService {
         }),
       },
     };
-  }
-
-  async validateJwtUser(userId) {
-    const user = await this.userService.findById(userId);
-    if (!user) {
-      throw new AppError(ErrorCode['0002'], 'User not found');
-    }
-
-    const currentUser: CurrentUser = { id: user.id, role: user.role };
-    return currentUser;
   }
 }

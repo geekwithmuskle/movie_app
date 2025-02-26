@@ -5,7 +5,6 @@ import { CreateUserDto } from 'src/modules/user/dto';
 import { LoginDto } from '../dto/auth.dto';
 import { AuthService } from '../service';
 import { ResponseFormat } from 'src/shared';
-import { RefreshJwtGuard } from '../guards';
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
@@ -49,7 +48,6 @@ export class AuthController {
     return ResponseFormat.successResponse(res, response, 'Login Successful!!!');
   }
 
-  @UseGuards(RefreshJwtGuard)
   @Post('refresh')
   async refreshToken(@Res() res, @Req() req) {
     return await this.authService.refreshToken(req.user);

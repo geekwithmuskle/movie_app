@@ -19,17 +19,13 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { RolesGuard } from 'src/modules/auth/guards/roles';
 import { CreateMovieDto } from 'src/modules/movies/dtos/CreateMovie.dto';
 import { PaginationDto } from 'src/modules/movies/dtos/pagination.dto';
 import { UpdateMovieDto } from 'src/modules/movies/dtos/UpdateMovie.dto';
 import { MoviesService } from 'src/modules/movies/services/movies/movies.service';
-import { Permissions } from 'src/shared/decorators';
-import { Action, Resource } from 'src/shared/utils/enums';
 import { ResponseFormat } from 'src/shared/utils/ResponseFormat';
 
 @ApiTags('Movie CRUD')
-@UseGuards(RolesGuard)
 @Controller('movies')
 export class MoviesController {
   constructor(private moviesService: MoviesService) {}
@@ -37,7 +33,6 @@ export class MoviesController {
   @ApiOperation({ summary: 'Get all movies in the table' })
   @ApiOkResponse({ description: 'Successful' })
   @ApiNotFoundResponse({ description: 'Record not found' })
-  @Permissions([{ resource: Resource.MOVIES, actions: [Action.READ] }])
   @Get()
   async getAll(@Req() req, @Res() res, @Query() paginationDto: PaginationDto) {
     const response = await this.moviesService.findAll(paginationDto);

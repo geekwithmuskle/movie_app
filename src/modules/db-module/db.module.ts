@@ -2,8 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Movies } from './entities/movies';
 import configuration from 'src/libs/configuration';
-import { UsersEntity } from './entities';
-import { Permission, Role } from './entities/authorization';
+import { Permission, Role, UsersEntity } from './entities';
 
 const config = configuration();
 

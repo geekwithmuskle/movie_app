@@ -1,4 +1,13 @@
-import { Controller, Get, Param, Query, Req, Res, SetMetadata, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Req,
+  Res,
+  SetMetadata,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from '../service';
 import {
   ApiBearerAuth,
@@ -8,12 +17,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ResponseFormat } from 'src/shared';
-import { QueryParamDto } from '../dto/query-param.dto';
-import { JwtGuard } from 'src/modules/auth/guards/jwt.guard';
-import { LoginDto } from 'src/modules/auth/dto/auth.dto';
-import { Role } from 'src/modules/auth/enum';
-import { Roles } from 'src/modules/auth/decorators/roles.decorator';
-import { RolesGuard } from 'src/modules/auth/guards/roles';
 
 @ApiTags('Users')
 @ApiBearerAuth('JWT')
@@ -35,29 +38,25 @@ export class UserController {
     return ResponseFormat.successResponse(res, response, 'Successful');
   }
 
-  @UseGuards(JwtGuard)
-  @Get('id')
-  async userProfile(@Req() req, @Res() res, @Param() id: QueryParamDto) {
-    const response = await this.userService.findById(id);
+  // @Get('id')
+  // async userProfile(@Req() req, @Res() res, @Param() id: QueryParamDto) {
+  //   const response = await this.userService.findById(id);
 
-    if (!response) {
-      return ResponseFormat.failureResponse(res, response, 'Failed');
-    }
+  //   if (!response) {
+  //     return ResponseFormat.failureResponse(res, response, 'Failed');
+  //   }
 
-    return ResponseFormat.successResponse(res, response, 'Successful');
-  }
+  //   return ResponseFormat.successResponse(res, response, 'Successful');
+  // }
 
-  @Roles(Role.ADMIN)
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtGuard)
-  @Get('mail')
-  async user(@Req() req, @Res() res, @Query() query: LoginDto) {
-    const response = await this.userService.findByEmail(query);
+  // @Get('mail')
+  // async user(@Req() req, @Res() res, @Query() query: LoginDto) {
+  //   const response = await this.userService.findByEmail(query);
 
-    if (!response) {
-      return ResponseFormat.failureResponse(res, response, 'Failed');
-    }
+  //   if (!response) {
+  //     return ResponseFormat.failureResponse(res, response, 'Failed');
+  //   }
 
-    return ResponseFormat.successResponse(res, response, 'Successful');
-  }
+  //   return ResponseFormat.successResponse(res, response, 'Successful');
+  // }
 }
