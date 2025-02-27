@@ -34,7 +34,6 @@ export class UserController {
   @ApiNotFoundResponse({ description: 'Record not found' })
   @Permissions([
     {
-      name: 'customers',
       resource: Resource.users,
       actions: Action.read,
     },

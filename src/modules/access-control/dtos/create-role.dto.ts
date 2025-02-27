@@ -33,29 +33,6 @@ export class CreateRoleDto {
 
 export class Permission {
   @ApiProperty({
-    example: 'Permission Name',
-    description: 'The name of the permission',
-  })
-  @IsNotEmpty({ message: 'Name is required' })
-  @IsString({ message: 'Name must be a string' })
-  @MaxLength(50, {
-    message: 'Name must be less than or equal to 50 characters',
-  })
-  name: string;
-
-  @ApiProperty({
-    example: 'Permission Description',
-    description: 'The description of the permission',
-    required: false,
-  })
-  @IsOptional()
-  @IsString({ message: 'Description must be a string' })
-  @MaxLength(50, {
-    message: 'Description must be less than or equal to 50 characters',
-  })
-  desc?: string;
-
-  @ApiProperty({
     enum: Resource,
     example: Resource.users,
     description: 'The resource associated with the permission',
