@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Action, Resource } from '../enums';
 
 @Entity()
 export class Permission {
@@ -19,6 +20,20 @@ export class Permission {
     nullable: true,
   })
   desc: string;
+
+  @Column({
+    type: 'enum',
+    enum: Resource,
+    default: Resource.users,
+  })
+  resource: Resource;
+
+  @Column({
+    type: 'enum',
+    enum: Action,
+    default: Action.read,
+  })
+  actions: Action;
 
   @CreateDateColumn()
   createTime: Date;

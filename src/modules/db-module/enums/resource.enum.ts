@@ -1,1 +1,4 @@
-export enum Resource {}
+export enum Resource {
+  admin = 'admin',
+  users = 'users',
+}

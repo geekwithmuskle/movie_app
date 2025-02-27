@@ -30,6 +30,9 @@ export class UsersEntity {
   @UpdateDateColumn()
   updateTime: Date;
 
+  @Column({ nullable: true })
+  roleId: number;
+
   @ManyToMany(() => Role)
   @JoinTable({
     name: 'user_role_relation',
