@@ -1,49 +1,18 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-
-import { Role } from './role.entity';
+import { Column, Entity } from 'typeorm';
+import { BaseDB } from './base';
+import { Resource } from 'src/modules/rbac';
 
 @Entity({ name: 'users' })
-export class UsersEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class User extends BaseDB {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
   password: string;
 
-  @CreateDateColumn()
-  createTime: Date;
-
-  @UpdateDateColumn()
-  updateTime: Date;
-
-  @Column({ nullable: true })
-  roleId: number;
-
-  @ManyToMany(() => Role)
-  @JoinTable({
-    name: 'user_role_relation',
-    joinColumn: {
-      name: 'userId',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'roleId',
-      referencedColumnName: 'id',
-    },
-  })
-  roles: Role[];
+  @Column({ type: 'enum', enum: Resource, default: Resource.User })
+  roles: Resource;
 }

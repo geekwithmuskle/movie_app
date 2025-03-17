@@ -1,15 +1,8 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity } from 'typeorm';
+import { BaseDB } from './base';
 
 @Entity({ name: 'movies' })
-export class Movies {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Movies extends BaseDB {
   @Column()
   name: string;
 
@@ -18,10 +11,4 @@ export class Movies {
 
   @Column()
   producer: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @CreateDateColumn()
-  updatedAt: Date;
 }

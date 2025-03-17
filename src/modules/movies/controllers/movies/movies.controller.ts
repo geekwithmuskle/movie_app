@@ -19,13 +19,17 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtGuard } from 'src/modules/auth/guards/jwt.guard';
 import { CreateMovieDto } from 'src/modules/movies/dtos/CreateMovie.dto';
 import { PaginationDto } from 'src/modules/movies/dtos/pagination.dto';
 import { UpdateMovieDto } from 'src/modules/movies/dtos/UpdateMovie.dto';
 import { MoviesService } from 'src/modules/movies/services/movies/movies.service';
+import { Resource, Roles, RolesGuard } from 'src/modules/rbac';
 import { ResponseFormat } from 'src/shared/utils/ResponseFormat';
 
 @ApiTags('Movie CRUD')
+@UseGuards(JwtGuard, RolesGuard)
+@Roles(Resource.Admin)
 @Controller('movies')
 export class MoviesController {
   constructor(private moviesService: MoviesService) {}

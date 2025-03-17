@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from 'src/modules/user';
 import { CreateUserDto } from 'src/modules/user/dto';
@@ -21,7 +21,7 @@ export class AuthController {
   })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @Post('register')
-  async registerUser(@Res() res, @Req() req, @Body() dto: CreateUserDto) {
+  async signUp(@Res() res, @Req() req, @Body() dto: CreateUserDto) {
     const response = await this.userService.create(dto);
     if (!response) {
       throw new ResponseFormat.failureResponse(

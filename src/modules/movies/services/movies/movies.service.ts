@@ -82,7 +82,7 @@ export class MoviesService {
   async addOne(details: CreateMovieParams) {
     const data = this.movieRepository.create({
       ...details,
-      createdAt: new Date(),
+      CreateAt: new Date(),
     });
     const { name } = data;
 
@@ -131,7 +131,7 @@ export class MoviesService {
 
     const result = this.movieRepository.merge(response, {
       ...updateMovie,
-      updatedAt: new Date(),
+      UpdateAt: new Date(),
     });
     return await this.movieRepository.save(result);
   }

@@ -2,22 +2,30 @@ import { Module } from '@nestjs/common';
 import { MoviesController, MoviesModule, MoviesService } from './movies';
 import { UserController, UserModule, UserService } from './user';
 import { AuthController, AuthModule, AuthService } from './auth';
-import { DatabaseModule, Movies, UsersEntity } from './db-module';
+import { DatabaseModule, Movies, User } from './db-module';
 import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AccessControlModule } from './access-control/access-control.module';
+import { RbacController } from './rbac/controller';
+import { RbacService } from './rbac/service';
+import { RbacModule } from './rbac';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UsersEntity]),
+    TypeOrmModule.forFeature([User]),
     TypeOrmModule.forFeature([Movies]),
     DatabaseModule,
     MoviesModule,
     UserModule,
     AuthModule,
-    AccessControlModule,
+    RbacModule,
   ],
-  controllers: [UserController, AuthController, MoviesController],
-  providers: [MoviesService, AuthService, JwtService, UserService],
+  controllers: [
+    UserController,
+    AuthController,
+    MoviesController,
+    RbacController,
+  ],
+  providers: [MoviesService, AuthService, JwtService, UserService, RbacService],
+  exports: [JwtService],
 })
 export class ResourceModule {}
