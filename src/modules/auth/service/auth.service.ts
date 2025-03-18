@@ -17,7 +17,6 @@ export class AuthService {
 
   async login(dto: LoginDto) {
     const user = await this.validateUser(dto);
-
     const payload = {
       username: user.email,
       sub: {
@@ -36,7 +35,7 @@ export class AuthService {
       },
       refreshToken: {
         accessToken: await this.jwtService.signAsync(payload, {
-          expiresIn: '7d',
+          expiresIn: '2d',
           secret: config.jwt.refreshToken,
         }),
       },
@@ -44,16 +43,13 @@ export class AuthService {
   }
 
   async validateUser(data: LoginDto) {
-    try {
-      const user = await this.userService.findByEmail(data);
+    const user = await this.userService.findByEmail(data);
 
-      if (user && (await compare(data.password, user.password))) {
-        const { password, id, ...result } = user;
-        return result;
-      }
-    } catch (err) {
-      throw new AppError(ErrorCode['0005'], 'Username or Password not correct');
+    if (user && (await compare(data.password, user.password))) {
+      const { password, id, ...result } = user;
+      return result;
     }
+    throw new AppError(ErrorCode['0005'], 'Invalid Credentials');
   }
 
   async refreshToken(user: any) {

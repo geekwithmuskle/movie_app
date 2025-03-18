@@ -4,8 +4,6 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { GlobalExceptionFilter } from './shared';
 import { SanitizeMiddleware } from './Sanitize.middleware';
 import { ResourceModule } from './modules/resource.module';
-import { RolesGuard } from './modules';
-import { JwtGuard } from './modules/auth/guards/jwt.guard';
 
 @Module({
   imports: [
@@ -28,14 +26,6 @@ import { JwtGuard } from './modules/auth/guards/jwt.guard';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: JwtGuard,
-    // },
   ],
 })
 export class AppModule {

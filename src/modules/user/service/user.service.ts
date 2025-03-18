@@ -18,12 +18,12 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  async create(data: CreateUserDto): Promise<Omit<User, 'password'>> {
+  async signup(data: CreateUserDto): Promise<Omit<User, 'password'>> {
     const user = await this.userRepository.findOne({
       where: { email: data.email },
     });
 
-    if (user) throw new AppError(ErrorCode['0002'], 'User already exists!!!');
+    if (user) throw new AppError(ErrorCode['0002'], 'Request Failed!!!');
 
     const hashedPassword = await hash(data.password, 10);
 
@@ -54,7 +54,7 @@ export class UserService {
   async findByEmail(data: LoginDto) {
     return await this.userRepository.findOne({
       where: {
-        email: data.username,
+        email: data.email,
       },
     });
   }

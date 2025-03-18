@@ -5,6 +5,7 @@ import { CreateUserDto } from 'src/modules/user/dto';
 import { LoginDto } from '../dto/auth.dto';
 import { AuthService } from '../service';
 import { ResponseFormat } from 'src/shared';
+import { RefreshDto } from '../dto';
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
@@ -21,8 +22,8 @@ export class AuthController {
   })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @Post('register')
-  async signUp(@Res() res, @Req() req, @Body() dto: CreateUserDto) {
-    const response = await this.userService.create(dto);
+  async register(@Res() res, @Req() req, @Body() dto: CreateUserDto) {
+    const response = await this.userService.signup(dto);
     if (!response) {
       throw new ResponseFormat.failureResponse(
         res,
@@ -38,6 +39,12 @@ export class AuthController {
     );
   }
 
+  @ApiOperation({ summary: 'signin an existing user' })
+  @ApiResponse({
+    status: 200,
+    description: 'User successfully signed in',
+    type: LoginDto,
+  })
   @Post('login')
   async login(@Res() res, @Req() req, @Body() dto: LoginDto) {
     const response = await this.authService.login(dto);
@@ -49,7 +56,7 @@ export class AuthController {
   }
 
   @Post('refresh')
-  async refreshToken(@Res() res, @Req() req) {
+  async refreshToken(@Res() res, @Req() req, @Body() dto: RefreshDto) {
     return await this.authService.refreshToken(req.user);
   }
 }

@@ -8,7 +8,7 @@ export class LoginDto {
   @Matches(/\S/, {
     message: 'Email cannot be empty or contain only whitespace',
   })
-  username: string;
+  email: string;
 
   @ApiProperty({ description: 'user password', example: 'Supra12345' })
   @IsString()
