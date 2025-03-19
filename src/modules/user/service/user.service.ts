@@ -19,8 +19,9 @@ export class UserService {
   ) {}
 
   async signup(data: CreateUserDto): Promise<Omit<User, 'password'>> {
+    const { email } = data;
     const user = await this.userRepository.findOne({
-      where: { email: data.email },
+      where: { email: email },
     });
 
     if (user) throw new AppError(ErrorCode['0002'], 'Request Failed!!!');
@@ -51,10 +52,10 @@ export class UserService {
     return users;
   }
 
-  async findByEmail(data: LoginDto) {
+  async findByEmail(email: string) {
     return await this.userRepository.findOne({
       where: {
-        email: data.email,
+        email: email,
       },
     });
   }

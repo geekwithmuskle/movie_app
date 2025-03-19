@@ -2,12 +2,15 @@ import { Module } from '@nestjs/common';
 import { AuthController } from './controller';
 import { AuthService } from './service';
 import { UserService } from '../user';
-import { User } from '../db-module';
+import { RefreshTokens, User } from '../db-module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([RefreshTokens]),
+  ],
   controllers: [AuthController],
   providers: [AuthService, UserService, JwtService],
 })

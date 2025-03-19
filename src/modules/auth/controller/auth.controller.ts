@@ -46,8 +46,8 @@ export class AuthController {
     type: LoginDto,
   })
   @Post('login')
-  async login(@Res() res, @Req() req, @Body() dto: LoginDto) {
-    const response = await this.authService.login(dto);
+  async login(@Res() res, @Req() req, @Body() credentials: LoginDto) {
+    const response = await this.authService.login(credentials);
 
     if (!response) {
       throw new ResponseFormat.failureResponse(res, null, 'Failed to login');
@@ -56,7 +56,18 @@ export class AuthController {
   }
 
   @Post('refresh')
-  async refreshToken(@Res() res, @Req() req, @Body() dto: RefreshDto) {
-    return await this.authService.refreshToken(req.user);
+  async refreshToken(@Res() res, @Req() req, @Body() data: RefreshDto) {
+    const response = await this.authService.refreshToken(data.token);
+
+    if (!response) {
+      throw new ResponseFormat.failureResponse(
+        res,
+        null,
+        'Failed get refresh token.',
+      );
+    }
+
+    console.log(response);
+    return ResponseFormat.successResponse(res, response, 'Valid Refresh Token');
   }
 }

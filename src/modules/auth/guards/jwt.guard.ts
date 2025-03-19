@@ -25,7 +25,7 @@ export class JwtGuard implements CanActivate {
 
       request['user'] = payload;
     } catch (err) {
-      console.log(err);
+     // console.log(err);
       throw new AppError(ErrorCode['0002'], 'Your Request Failed');
     }
 

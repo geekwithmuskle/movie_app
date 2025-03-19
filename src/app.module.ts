@@ -4,6 +4,7 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { GlobalExceptionFilter } from './shared';
 import { SanitizeMiddleware } from './Sanitize.middleware';
 import { ResourceModule } from './modules/resource.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
