@@ -7,8 +7,6 @@ import AppError from 'src/shared/utils/AppError';
 import { ErrorCode } from 'src/shared';
 import { hash } from 'bcrypt';
 import { QueryParamDto } from '../dto/query-param.dto';
-import { LoginDto } from 'src/modules/auth/dto/auth.dto';
-import { Resource } from 'src/modules/rbac';
 import { UpdateUserDto } from '../dto/update-user.dto';
 
 @Injectable()
@@ -33,7 +31,7 @@ export class UserService {
       ...data,
       password: hashedPassword,
       // Add role ID
-      roles: Resource.User, // Add role
+     // roles: Resource.User, // Add role
     });
 
     const savedUser = await this.userRepository.save(newUser);

@@ -5,9 +5,6 @@ import { AuthController, AuthModule, AuthService } from './auth';
 import { DatabaseModule, Movies, RefreshTokens, User } from './db-module';
 import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RbacController } from './rbac/controller';
-import { RbacService } from './rbac/service';
-import { RbacModule } from './rbac';
 
 @Module({
   imports: [
@@ -18,15 +15,9 @@ import { RbacModule } from './rbac';
     MoviesModule,
     UserModule,
     AuthModule,
-    RbacModule,
   ],
-  controllers: [
-    UserController,
-    AuthController,
-    MoviesController,
-    RbacController,
-  ],
-  providers: [MoviesService, AuthService, JwtService, UserService, RbacService],
+  controllers: [UserController, AuthController, MoviesController],
+  providers: [MoviesService, AuthService, JwtService, UserService],
   exports: [JwtService],
 })
 export class ResourceModule {}

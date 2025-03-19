@@ -9,12 +9,11 @@ import {
 } from '@nestjs/swagger';
 import { ResponseFormat } from 'src/shared';
 import { JwtGuard } from 'src/modules/auth/guards/jwt.guard';
-import { RolesGuard } from 'src/modules/rbac';
 
 @ApiTags('Users')
 @ApiBearerAuth('JWT')
 @Controller('user')
-@UseGuards(JwtGuard, RolesGuard)
+@UseGuards(JwtGuard)
 export class UserController {
   constructor(private userService: UserService) {}
 
