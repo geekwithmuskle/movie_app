@@ -1,11 +1,25 @@
-import { Body, Controller, Post, Req, Res } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Post,
+  Put,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UserService } from 'src/modules/user';
 import { CreateUserDto } from 'src/modules/user/dto';
 import { LoginDto } from '../dto/auth.dto';
 import { AuthService } from '../service';
-import { ResponseFormat } from 'src/shared';
-import { RefreshDto } from '../dto';
+import { ErrorCode, ResponseFormat } from 'src/shared';
+import { ChangePasswordDto, RefreshDto } from '../dto';
+import { JwtGuard } from '../guards';
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
@@ -69,5 +83,29 @@ export class AuthController {
 
     console.log(response);
     return ResponseFormat.successResponse(res, response, 'Valid Refresh Token');
+  }
+
+  @ApiBearerAuth('JWT')
+  @UseGuards(JwtGuard)
+  @Put('change-password')
+  async changePassword(@Req() req, @Res() res, @Body() dto: ChangePasswordDto) {
+    const response = this.authService.changePassword(
+      req.user.userId,
+      dto.oldPassword,
+      dto.newPassword,
+    );
+
+    if (!response) {
+      return ResponseFormat.failureResponse(
+        res,
+        null,
+        'Failed to change password!!!',
+      );
+    }
+    return ResponseFormat.successResponse(
+      res,
+      response,
+      'Password changed succesfully.',
+    );
   }
 }

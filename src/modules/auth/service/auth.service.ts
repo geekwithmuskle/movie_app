@@ -11,6 +11,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import * as bycrypt from 'bcrypt';
+import { hash } from 'bcrypt';
+import { ChangePasswordDto } from '../dto';
 
 const config = configuration();
 @Injectable()
@@ -22,102 +24,21 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  // async login(dto: LoginDto) {
-  //   const user = await this.validateUser(dto);
-  //   const payload = {
-  //     email: user.email,
-  //     sub: {
-  //       name: user.name,
-  //       id: user.id,
-  //       roles: user.roles,
-  //     },
-  //   };
-
-  //   const user_id = user.id;
-
-  //   const refreshToken = await this.jwtService.signAsync(payload, {
-  //     secret: config.jwt.refreshToken,
-  //   });
-
-  //   await this.storeRefreshToken(refreshToken, user_id);
-  //   return {
-  //     user,
-  //     backendToken: {
-  //       accessToken: await this.jwtService.signAsync(payload, {
-  //         expiresIn: '1h',
-  //         secret: config.jwt.secretKey,
-  //       }),
-  //     },
-  //     refreshToken: {
-  //       accessToken: refreshToken,
-  //     },
-  //   };
-  // }
-
-  // async generateRefreshToken(token_key: string, userId: number) {
-  //   const token = await this.refreshRepo.findOne({
-  //     where: { token: token_key, expiryDate: { $gte: new Date() } },
-  //   });
-
-  //   if (!token) {
-  //     throw new AppError(ErrorCode['0005'], 'Invalid Token');
-  //   }
-
-  //   return this.storeRefreshToken(token_key, userId);
-  // }
-
-  // async storeRefreshToken(
-  //   token: string,
-  //   userId: number,
-  // ): Promise<RefreshTokens> {
-  //   const expiryDate = new Date();
-  //   expiryDate.setDate(expiryDate.getDate() + 2);
-
-  //   const response = await this.refreshRepo.create({
-  //     token,
-  //     userId,
-  //     expiryDate,
-  //   });
-
-  //   const savedToken = await this.refreshRepo.save(response);
-  //   return savedToken;
-  // }
-
-  // async validateUser(data: LoginDto) {
-  //   const user = await this.userService.findByEmail(data);
-
-  //   if (user && (await compare(data.password, user.password))) {
-  //     const { password, ...result } = user;
-  //     return result;
-  //   }
-  //   throw new AppError(ErrorCode['0005'], 'Invalid Credentials');
-  // }
-
-  // async generateAccessToken(userId) {
-  //   const accessToken = this.jwtService.signAsync(
-  //     { userId },
-  //     { expiresIn: '1hr' },
-  //   );
-
-  //   const refreshToken = uuidv4();
-
-  //   return { accessToken, refreshToken };
-  // }
-
   async login(credentials: LoginDto) {
     // Find if user exist by email
     const { email, password } = credentials;
 
     const user = await this.userService.findByEmail(email);
+    console.log(user);
 
     if (!user) {
-      throw new AppError(ErrorCode['0005'], 'Invalid Credentials');
+      throw new AppError(ErrorCode['0005'], 'Invalid email or password!!!');
     }
     // Compare inputted password with existing password in the db
     const passwordMatch = await bycrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      throw new AppError(ErrorCode['0005'], 'Invalid Credentials');
+      throw new AppError(ErrorCode['0005'], 'Passwords do not match!!!');
     }
 
     const { id } = user;
@@ -184,5 +105,29 @@ export class AuthService {
       });
       return await this.refreshTokenRepo.save(newToken);
     }
+  }
+
+  async changePassword(
+    userId: number,
+    oldpassword: string,
+    newpassword: string,
+  ) {
+    const user = await this.userService.findById(userId);
+
+    if (!user) {
+      throw new AppError(ErrorCode['0002'], 'User not found.');
+    }
+
+    const passwordMatch = await bycrypt.compare(oldpassword, user.password);
+
+    if (!passwordMatch) {
+      throw new AppError(ErrorCode['0002'], 'Password do not match');
+    }
+
+    // change user's password and hash it
+    const hashedpassword = await hash(newpassword, 10);
+    user.password = hashedpassword;
+
+    return await this.userService.save(user);
   }
 }
