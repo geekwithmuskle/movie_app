@@ -108,4 +108,9 @@ export class AuthController {
       'Password changed succesfully.',
     );
   }
+
+  // @Post('forgot-password')
+  // async forgotPassword(@req() req, @res() res(), @Body() forgotPasswordDto: ForgotPasswordDto){
+  //   return this.authService.forgotPassword(forgotPasswordDto.email);
+  // }
 }

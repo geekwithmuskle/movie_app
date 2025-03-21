@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthController } from './controller';
 import { AuthService } from './service';
 import { UserService } from '../user';
-import { RefreshTokens, User } from '../db-module';
+import { RefreshTokens, ResetTokens, User } from '../db-module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 
@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
   imports: [
     TypeOrmModule.forFeature([User]),
     TypeOrmModule.forFeature([RefreshTokens]),
+    TypeOrmModule.forFeature([ResetTokens]),
   ],
   controllers: [AuthController],
   providers: [AuthService, UserService, JwtService],

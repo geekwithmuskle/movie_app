@@ -6,13 +6,14 @@ import AppError from 'src/shared/utils/AppError';
 import { ErrorCode } from 'src/shared';
 import { JwtService } from '@nestjs/jwt';
 import configuration from 'src/libs/configuration';
-import { RefreshTokens } from 'src/modules/db-module';
+import { RefreshTokens, ResetTokens } from 'src/modules/db-module';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import * as bycrypt from 'bcrypt';
 import { hash } from 'bcrypt';
 import { ChangePasswordDto } from '../dto';
+import { nanoid } from 'nanoid';
 
 const config = configuration();
 @Injectable()
@@ -20,6 +21,8 @@ export class AuthService {
   constructor(
     @InjectRepository(RefreshTokens)
     private refreshTokenRepo: Repository<RefreshTokens>,
+    @InjectRepository(ResetTokens)
+    private resetTokenRepo: Repository<ResetTokens>,
     private userService: UserService,
     private jwtService: JwtService,
   ) {}
@@ -52,7 +55,7 @@ export class AuthService {
     const accessToken = await this.jwtService.signAsync(
       { userId },
       {
-        expiresIn: '1h',
+        expiresIn: '10h',
         secret: config.jwt.secretKey,
       },
     );
@@ -129,5 +132,23 @@ export class AuthService {
     user.password = hashedpassword;
 
     return await this.userService.save(user);
+  }
+
+  async forgotPassword(email: string) {
+    //Check that user exist
+    const user = await this.userService.findByEmail(email);
+
+    //If user exists, generate password reset link
+    if (user) {
+      const expiryDate = new Date();
+      expiryDate.setHours(expiryDate.getHours() + 1);
+
+      const resetToken = nanoid(64);
+      await this.resetTokenRepo.create({
+        token: resetToken,
+        userId: user.id,
+        expiryDate,
+      });
+    }
   }
 }

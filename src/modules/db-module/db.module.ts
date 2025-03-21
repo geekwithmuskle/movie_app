@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Movies } from './entities/movies';
 import configuration from 'src/libs/configuration';
 //import { PermissionEntity, RoleEntity, UserEntity } from './new-entity';
-import { RefreshTokens, User } from './entities';
+import { RefreshTokens, ResetTokens, User } from './entities';
 const config = configuration();
 
 @Module({
@@ -16,7 +16,7 @@ const config = configuration();
       password: config.mysql.password,
       database: config.mysql.database,
       synchronize: config.mysql.synchronize,
-      entities: [Movies, User, RefreshTokens],
+      entities: [Movies, User, RefreshTokens, ResetTokens],
     }),
   ],
 })
