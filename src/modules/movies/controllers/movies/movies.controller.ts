@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiBody,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -27,8 +28,9 @@ import { MoviesService } from 'src/modules/movies/services/movies/movies.service
 import { ResponseFormat } from 'src/shared/utils/ResponseFormat';
 
 @ApiTags('Movie CRUD')
-@UseGuards(JwtGuard)
 @Controller('movies')
+@ApiBearerAuth('JWT')
+@UseGuards(JwtGuard)
 export class MoviesController {
   constructor(private moviesService: MoviesService) {}
 

@@ -57,16 +57,18 @@ export class UserService {
     });
   }
 
-  async findByEmailAndUpdate(dto: UpdateUserDto) {
-    const user = await this.userRepository.findOne({
-      where: { email: dto.email },
-    });
+  async Update(dto: UpdateUserDto): Promise<User> {
+    if (!dto.email) {
+      throw new AppError(ErrorCode['0002'], 'Email is required');
+    }
+
+    const user = await this.userRepository.findOneBy({ email: dto.email });
 
     if (!user) {
       throw new AppError(ErrorCode['0002'], 'User does not exist!!!');
     }
 
-    const updatedUser = this.userRepository.merge(user, dto);
+    const updatedUser = await this.userRepository.merge(user, dto);
 
     return await this.userRepository.save(updatedUser);
   }
@@ -78,4 +80,8 @@ export class UserService {
   async save(user: User): Promise<User> {
     return await this.userRepository.save(user);
   }
+
+  // async loggedInUser(id: number) {
+  //   return await this.userRepository.findOneBy({ id });
+  // }
 }

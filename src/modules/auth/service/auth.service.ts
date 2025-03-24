@@ -32,7 +32,6 @@ export class AuthService {
     const { email, password } = credentials;
 
     const user = await this.userService.findByEmail(email);
-    console.log(user);
 
     if (!user) {
       throw new AppError(ErrorCode['0005'], 'Invalid email or password!!!');
