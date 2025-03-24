@@ -17,6 +17,7 @@ const config = configuration();
       database: config.mysql.database,
       synchronize: config.mysql.synchronize,
       entities: [Movies, User, RefreshTokens, ResetTokens],
+      migrations: ['src/migration/*.ts'],
     }),
   ],
 })
