@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseDB } from './base';
-import { RefreshTokens } from './refresh-token';
-import { ResetTokens } from './reset-token';
+import { RefreshTokens } from './refresh-token.entity';
+import { ResetTokens } from './reset-token.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseDB {

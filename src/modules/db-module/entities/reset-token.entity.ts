@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from './users';
+import { User } from './users.entity';
 
 @Entity({ name: 'reset_tokens' })
 export class ResetTokens {
