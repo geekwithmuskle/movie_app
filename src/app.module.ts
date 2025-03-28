@@ -4,9 +4,6 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { GlobalExceptionFilter } from './shared';
 import { SanitizeMiddleware } from './Sanitize.middleware';
 import { ResourceModule } from './modules/resource.module';
-import { JwtModule } from '@nestjs/jwt';
-import { AppLoggerModule } from './app-logger/app-logger.module';
-
 @Module({
   imports: [
     ResourceModule,
@@ -18,7 +15,6 @@ import { AppLoggerModule } from './app-logger/app-logger.module';
         },
       ],
     }),
-    AppLoggerModule,
   ],
   providers: [
     {

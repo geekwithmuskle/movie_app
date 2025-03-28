@@ -11,6 +11,7 @@ import {
 } from './db-module';
 import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LoggerService } from './logger';
 
 @Module({
   imports: [
@@ -24,7 +25,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     AuthModule,
   ],
   controllers: [UserController, AuthController, MoviesController],
-  providers: [MoviesService, AuthService, JwtService, UserService],
+  providers: [
+    MoviesService,
+    AuthService,
+    JwtService,
+    UserService,
+    LoggerService,
+  ],
   exports: [JwtService],
 })
 export class ResourceModule {}

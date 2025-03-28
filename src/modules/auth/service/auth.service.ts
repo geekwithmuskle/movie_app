@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LoginDto } from '../dto/auth.dto';
 import { UserService } from 'src/modules/user';
-import { compare } from 'bcrypt';
 import AppError from 'src/shared/utils/AppError';
 import { ErrorCode } from 'src/shared';
 import { JwtService } from '@nestjs/jwt';
@@ -9,10 +8,8 @@ import configuration from 'src/libs/configuration';
 import { RefreshTokens, ResetTokens } from 'src/modules/db-module';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThanOrEqual, Repository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
 import * as bycrypt from 'bcrypt';
 import { hash } from 'bcrypt';
-import { ChangePasswordDto } from '../dto';
 import { nanoid } from 'nanoid';
 
 const config = configuration();
