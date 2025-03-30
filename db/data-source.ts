@@ -12,6 +12,7 @@ export const dataSourceOptions: DataSourceOptions = {
   database: config.mysql.database,
   entities: ['dist/**/*.entity.js'],
   migrations: ['dist/db/migrations/*.js'],
+  logging: ['error'],
 };
 
 const dataSource = new DataSource(dataSourceOptions);

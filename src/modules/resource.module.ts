@@ -12,6 +12,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerService } from './logger';
+import { RolesModule } from './roles';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { LoggerService } from './logger';
     MoviesModule,
     UserModule,
     AuthModule,
+    RolesModule,
   ],
   controllers: [UserController, AuthController, MoviesController],
   providers: [

@@ -18,10 +18,10 @@ export class UserService {
   async signup(data: CreateUserDto): Promise<Omit<User, 'password'>> {
     const { email } = data;
     const user = await this.userRepository.findOne({
-      where: { email: email },
+      where: { email },
     });
 
-    if (user) throw new AppError(ErrorCode['0002'], 'Request Failed!!!');
+    if (user) throw new AppError(ErrorCode['0002'], 'User already exists!');
 
     const hashedPassword = await hash(data.password, 10);
 
@@ -52,17 +52,19 @@ export class UserService {
   async findByEmail(email: string) {
     return await this.userRepository.findOne({
       where: {
-        email: email,
+        email,
       },
     });
   }
 
   async Update(dto: UpdateUserDto): Promise<User> {
-    if (!dto.email) {
-      throw new AppError(ErrorCode['0002'], 'Email is required');
-    }
+    // if (!dto.email) {
+    //   throw new AppError(ErrorCode['0002'], 'Email is required');
+    // }
 
-    const user = await this.userRepository.findOneBy({ email: dto.email });
+    const { email } = dto;
+
+    const user = await this.userRepository.findOneBy({ email });
 
     if (!user) {
       throw new AppError(ErrorCode['0002'], 'User does not exist!!!');
@@ -74,14 +76,10 @@ export class UserService {
   }
 
   async findById(data: number) {
-    return await this.userRepository.findOne({ where: { id: data } });
+    return await this.userRepository.findOneBy({ id: data });
   }
 
   async save(user: User): Promise<User> {
     return await this.userRepository.save(user);
   }
-
-  // async loggedInUser(id: number) {
-  //   return await this.userRepository.findOneBy({ id });
-  // }
 }
