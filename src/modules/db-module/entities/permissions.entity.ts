@@ -11,6 +11,9 @@ export class Permission extends BaseDB {
   @Column({ type: 'set', enum: Action, default: [Action.read] })
   actions: Action[];
 
+  @Column({ nullable: true })
+  roleId: number;
+
   @ManyToOne(() => Roles, (roles) => roles.permissions)
   @JoinColumn({ name: 'roleId' })
   role: Roles;

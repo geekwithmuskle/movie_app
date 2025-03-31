@@ -15,8 +15,8 @@ export class User extends BaseDB {
   @Column()
   password: string;
 
-  // @Column({ type: 'enum', enum: Resource, default: Resource.User })
-  // roles: Resource;
+  @Column({ nullable: true })
+  roleId: number;
 
   @OneToMany(() => RefreshTokens, (refreshToken) => refreshToken.user)
   refreshTokens: RefreshTokens[];
