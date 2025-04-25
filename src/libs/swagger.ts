@@ -6,6 +6,10 @@ export const configureSwagger = (app) => {
     .setDescription('The Movies API documentation')
     .setVersion('1.0')
     .addTag('movies')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'JWT',
+    )
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/documentation', app, documentFactory);

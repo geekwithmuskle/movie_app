@@ -9,29 +9,38 @@ import {
   Query,
   Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiBody,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { Permissions } from 'src/modules/auth/decorator';
+import { AuthorizationGuard } from 'src/modules/auth/guards';
+import { JwtGuard } from 'src/modules/auth/guards/jwt.guard';
 import { CreateMovieDto } from 'src/modules/movies/dtos/CreateMovie.dto';
 import { PaginationDto } from 'src/modules/movies/dtos/pagination.dto';
 import { UpdateMovieDto } from 'src/modules/movies/dtos/UpdateMovie.dto';
 import { MoviesService } from 'src/modules/movies/services/movies/movies.service';
+import { Action, Resource } from 'src/modules/roles/enum';
 import { ResponseFormat } from 'src/shared/utils/ResponseFormat';
 
 @ApiTags('Movie CRUD')
 @Controller('movies')
+@ApiBearerAuth('JWT')
+@UseGuards(JwtGuard, AuthorizationGuard)
 export class MoviesController {
   constructor(private moviesService: MoviesService) {}
 
   @ApiOperation({ summary: 'Get all movies in the table' })
   @ApiOkResponse({ description: 'Successful' })
   @ApiNotFoundResponse({ description: 'Record not found' })
+  @Permissions([{ resource: Resource.admin, action: [Action.read] }])
   @Get()
   async getAll(@Req() req, @Res() res, @Query() paginationDto: PaginationDto) {
     const response = await this.moviesService.findAll(paginationDto);

@@ -1,16 +1,12 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { MoviesModule } from './modules/movies/movies.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
-import { GlobalExceptionFilter } from './shared/utils/GlobalExceptionFilter';
-import { DatabaseModule } from './modules/db-module/db.module';
+import { GlobalExceptionFilter } from './shared';
 import { SanitizeMiddleware } from './Sanitize.middleware';
-import { UserModule } from './modules/user/user.module';
-import { UserController } from './modules/user/controller';
-
+import { ResourceModule } from './modules/resource.module';
 @Module({
   imports: [
-    DatabaseModule,
+    ResourceModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {
@@ -19,10 +15,7 @@ import { UserController } from './modules/user/controller';
         },
       ],
     }),
-    MoviesModule,
-    UserModule,
   ],
-  controllers: [UserController],
   providers: [
     {
       provide: APP_FILTER,

@@ -24,4 +24,9 @@ export default () => ({
     database: config.get<string>('DB_NAME'),
     synchronize: true, // Set to false in production
   },
+
+  jwt: {
+    secretKey: config.get<string>('JWT_SECRET_KEY'),
+    refreshToken: config.get<string>('JWT_REFRESH_TOKEN_KEY'),
+  },
 });
