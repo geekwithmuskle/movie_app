@@ -4,5 +4,4 @@ export * from './base';
 export * from './refresh-token.entity';
 export * from './reset-token.entity';
 export * from './theaters.entity';
-export * from './permissions.entity';
 export * from './roles.entity';

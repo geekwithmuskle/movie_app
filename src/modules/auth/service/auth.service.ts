@@ -5,12 +5,14 @@ import AppError from 'src/shared/utils/AppError';
 import { ErrorCode } from 'src/shared';
 import { JwtService } from '@nestjs/jwt';
 import configuration from 'src/libs/configuration';
-import { RefreshTokens, ResetTokens } from 'src/modules/db-module';
+import { RefreshTokens, ResetTokens, Roles } from 'src/modules/db-module';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 import * as bycrypt from 'bcrypt';
 import { hash } from 'bcrypt';
 import { nanoid } from 'nanoid';
+import { RolesService } from 'src/modules/roles';
+import { CreateRoleDto, Permission } from 'src/modules/roles/dtos';
 
 const config = configuration();
 @Injectable()
@@ -22,6 +24,7 @@ export class AuthService {
     private resetTokenRepo: Repository<ResetTokens>,
     private userService: UserService,
     private jwtService: JwtService,
+    private roleService: RolesService,
   ) {}
 
   async login(credentials: LoginDto) {
@@ -146,5 +149,14 @@ export class AuthService {
         expiryDate,
       });
     }
+  }
+
+  async getPermission(userId: number) {
+    const user = await this.userService.findById(userId);
+    console.log('user', user.id);
+    if (!user) throw new AppError(ErrorCode['0002'], `Can't fetch user`);
+
+    const result = await this.roleService.getRoleId(user.id);
+    return result;
   }
 }

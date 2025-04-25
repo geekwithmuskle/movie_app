@@ -5,10 +5,10 @@ import { Roles } from './roles.entity';
 
 @Entity()
 export class Permission extends BaseDB {
-  @Column({ type: 'enum', enum: Resource, default: Resource.user })
+  @Column({ type: 'enum', enum: Resource })
   resource: Resource;
 
-  @Column({ type: 'set', enum: Action, default: [Action.read] })
+  @Column({ type: 'set', enum: Action })
   actions: Action[];
 
   @Column({ nullable: true })

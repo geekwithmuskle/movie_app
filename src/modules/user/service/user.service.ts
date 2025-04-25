@@ -29,8 +29,7 @@ export class UserService {
     const newUser = this.userRepository.create({
       ...data,
       password: hashedPassword,
-      // Add role ID
-      // roles: Resource.User, // Add role
+      roleId: 3,
     });
 
     const savedUser = await this.userRepository.save(newUser);

@@ -11,15 +11,25 @@ export class RolesService {
   constructor(@InjectRepository(Roles) private roleRepo: Repository<Roles>) {}
 
   async createRole(role: CreateRoleDto) {
-    if (this.verifyRole(role.name)) {
+    if (await this.verifyRole(role.name)) {
       throw new AppError(ErrorCode['0002'], 'Role already exists');
-    } else {
-      console.log(role);
-      return await this.roleRepo.create(role);
     }
+    console.log(role);
+    const result = await this.roleRepo.create(role);
+
+    return await this.roleRepo.save(result);
+  }
+
+  async deleteRole(rolename: string) {
+    const result = await this.verifyRole(rolename);
+    return await this.roleRepo.remove(result);
   }
 
   async verifyRole(rolename: string) {
     return await this.roleRepo.findOneBy({ name: rolename });
+  }
+
+  async getRoleId(roleId: number) {
+    return await this.roleRepo.find({ where: { id: roleId } });
   }
 }

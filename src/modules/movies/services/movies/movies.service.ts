@@ -4,7 +4,7 @@ import { PaginationDto } from 'src/modules/movies/dtos/pagination.dto';
 import { UpdateMovieDto } from 'src/modules/movies/dtos/UpdateMovie.dto';
 import AppError from 'src/shared/utils/AppError';
 import { CreateMovieParams, MovieParams } from 'src/shared/utils/types';
-import { ErrorCode } from 'src/shared/utils/error-code.enum';
+import { ErrorCode } from 'src/shared/utils/error-code';
 import { Movies } from 'src/modules/db-module/entities/movies.entity';
 import { Brackets, FindOptionsWhere, Not, Repository } from 'typeorm';
 
